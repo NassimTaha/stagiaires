@@ -34,17 +34,17 @@
                         <td>
                             <?php
                                 $start_date = new DateTime($stagiaire->Stage->start_date);
-                                $end_date = new DateTime($stagiaire->Stage->end_date);
-                                $duration = $start_date->diff($end_date)->format("%m mois");
-                                if ($start_date->diff($end_date)->days < 30) {
-                                    $duration = $start_date->diff($end_date)->days . " jours";
+                                $cloture_date = new DateTime($stagiaire->Stage->cloture_date);
+                                $duration = $start_date->diff($cloture_date)->format("%m mois");
+                                if ($start_date->diff($cloture_date)->days < 30) {
+                                    $duration = $start_date->diff($cloture_date)->days . " jours";
                                 }
                                 echo $duration;
                             ?>
                         </td>
                         <td>{{$stagiaire->stage->specialite->name}}</td>
                         <td>{{$stagiaire->Stage->start_date}}</td>
-                        <td>{{$stagiaire->Stage->end_date}}</td>
+                        <td>{{$stagiaire->Stage->cloture_date}}</td>
                         <td>
                         <a href="{{ route('attestation.download', $stagiaire) }}">
                             <button class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-arrow-down-fill"></i></button>
@@ -99,17 +99,17 @@
                     <td>
                         <?php
                             $start_date = new DateTime($stagiaire->Stage->start_date);
-                            $end_date = new DateTime($stagiaire->Stage->end_date);
-                            $duration = $start_date->diff($end_date)->format("%m mois");
-                            if ($start_date->diff($end_date)->days < 30) {
-                                $duration = $start_date->diff($end_date)->days . " jours";
+                            $cloture_date = new DateTime($stagiaire->Stage->cloture_date);
+                            $duration = $start_date->diff($cloture_date)->format("%m mois");
+                            if ($start_date->diff($cloture_date)->days < 30) {
+                                $duration = $start_date->diff($cloture_date)->days . " jours";
                             }
                             echo $duration;
                         ?>
                     </td>
                     <td>{{$stagiaire->stage->specialite->name}}</td>
                     <td>{{$stagiaire->Stage->start_date}}</td>
-                    <td>{{$stagiaire->Stage->end_date}}</td>
+                    <td>{{$stagiaire->Stage->cloture_date}}</td>
                     <td>
                     <a href="{{ route('attestation.download', $stagiaire) }}">
                         <button class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-arrow-down-fill"></i></button>

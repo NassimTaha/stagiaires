@@ -138,7 +138,7 @@
                     </td>
                     @endif
                     @endforeach                     
-                </tr>          
+                </tr>  
                 <tr>
                     <th class='table-dark'>Stage clôturé </th>
                     @foreach ($stages as $key => $stage)
@@ -149,9 +149,9 @@
                                 <i class="bi bi-check-circle-fill"></i> Oui
                             </button>      
                             @else
-                            <button class="btn btn-sm  btn-danger">
+                            <a href="{{route('Stage.cloture', $stage->id)}}" class="btn btn-sm btn-danger">
                                 <i class="bi bi-x-circle-fill"></i> Non
-                            </button>
+                            </a>
                             @endif
                         </td>                                            
                         @else
@@ -161,14 +161,39 @@
                                 <i class="bi bi-check-circle-fill"></i> Oui
                             </button>
                             @else
-                            <button class="btn btn-sm btn-danger">
+                            <a href="{{route('Stage.cloture', $stage->id)}}" class="btn btn-sm btn-danger">
                                 <i class="bi bi-x-circle-fill"></i> Non
-                            </button>
+                            </a>
                             @endif
                         </td>                                                
                         @endif 
                     @endforeach                     
                 </tr>  
+                <tr>
+                    <th class='table-dark'>Modifier / Annuler</th>
+                    @foreach ($stages as $key => $stage)
+                    @if ($key % 2 == 0)
+                        <td class="table-light" style="text-align: center;">
+                            <a href="{{route('stages.edit', $stage->id)}}" class="btn btn-sm btn-dark ">
+                                <i class="bi bi-pencil-square text-warning"></i>
+                            </a>
+                            <a href="{{route('Stage.cloture', $stage->id)}}" class="btn btn-sm btn-dark ">
+                                <i class="bi bi-x-octagon-fill text-warning"></i> 
+                            </a>
+                        </td>
+                    @else
+                            <td class="table-warning" style="text-align: center;">
+                                <a href="{{route('stages.edit', $stage->id)}}" class="btn btn-sm btn-dark ">
+                                    <i class="bi bi-pencil-square text-warning"></i>
+                                </a>
+                                <a  class="btn btn-sm btn-dark ">
+                                    <i class="bi bi-x-octagon-fill text-warning"></i> 
+                                </a>
+                            </td>
+                    @endif
+                    @endforeach  
+                </tr>        
+                
                 
                 
             </table>

@@ -16,7 +16,7 @@ class Stage extends Model
         'end_date',
         'reception_days',
         'level',
-        'stagiare_count',
+        'stagiaire_count',
         'year',
         'memoire',
         'cloture',

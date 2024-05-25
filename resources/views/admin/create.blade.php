@@ -36,12 +36,12 @@
             </div>
             <div class="col-4">
                 <p class="h6">Nombre de stagiaires</p>
-                <select id="stagiare_count" disabled name="stagiare_count" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="toggleStagiaires(this)" required>
+                <select id="stagiaire_count" disabled name="stagiaire_count" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="toggleStagiaires(this)" required>
                     <option value="" selected disabled>Sélectionnez le nombre de stagiaires</option>
-                    <option value="Monome" {{ old('stagiare_count') == 'Monome' ? 'selected' : '' }}>Monome</option>
-                    <option value="Binome" {{ old('stagiare_count') == 'Binome' ? 'selected' : '' }}>Binome</option>
-                    <option value="Trinome" {{ old('stagiare_count') == 'Trinome' ? 'selected' : '' }}>Trinome</option>
-                    <option value="Quadrinome" {{ old('stagiare_count') == 'Quadrinome' ? 'selected' : '' }}>Quadrinome</option>
+                    <option value="Monome" {{ old('stagiaire_count') == 'Monome' ? 'selected' : '' }}>Monome</option>
+                    <option value="Binome" {{ old('stagiaire_count') == 'Binome' ? 'selected' : '' }}>Binome</option>
+                    <option value="Trinome" {{ old('stagiaire_count') == 'Trinome' ? 'selected' : '' }}>Trinome</option>
+                    <option value="Quadrinome" {{ old('stagiaire_count') == 'Quadrinome' ? 'selected' : '' }}>Quadrinome</option>
                 </select>
             </div>
         </div>

@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-4">
                     <p class="h6">Nombre de stagiaires</p>
-                    <select name="stagiare_count" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                    <select name="stagiaire_count" class="form-select form-select-sm" aria-label=".form-select-sm example">
                         <option selected value="">-- Choisissez le nombre de stagiaires --</option>
                         <option value="Monome">Monome</option>
                         <option value="Binome">Binome</option>

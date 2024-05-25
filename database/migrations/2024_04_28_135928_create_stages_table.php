@@ -17,12 +17,14 @@ return new class extends Migration
             $table->string('theme');
             $table->date('start_date');
             $table->date('end_date');
+            $table->date('cloture_date');
             $table->enum('level', ['Licence', 'Master', 'Doctorat', 'Ingenieur', 'TS']);
             $table->enum('stagiare_count', ['Monome', 'Binome', 'Trinome', 'Quadrinome']);
             $table->unsignedInteger('year')->default(date('Y'));
             $table->string('reception_days');
             $table->boolean('memoire')->default(false);
             $table->boolean('cloture')->default(false);
+            $table->string('observation')->nullable();
             $table->unsignedBigInteger('encadrant_id');
             $table->foreign('encadrant_id')->references('id')->on('encadrants')->onDelete('cascade');
             $table->unsignedBigInteger('etablissement_id');

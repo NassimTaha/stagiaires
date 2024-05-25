@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminEncadrantController;
 use App\Http\Controllers\AttestationController;
 use App\Http\Controllers\CompteController;
 use App\Http\Controllers\DomaineController;
@@ -91,7 +92,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('searchStages', [SearchController::class, 'searchStages'])->name('stages.searchStages');
     Route::match(['get', 'post'], 'searchResults1', [SearchController::class, 'searchResults1'])->name('stages.searchResults1');
     Route::match(['get', 'post'], 'searchResults2', [SearchController::class, 'searchResults2'])->name('stages.searchResults2');
+    Route::get('/stage/{stage}/cloture', [StageController::class, 'cloture'])->name('Stage.cloture');
+    Route::post('/stage/done/{stage}', [StageController::class, 'done'])->name('stage.done');
 
+    Route::get('encadrants2', [AdminEncadrantController::class, 'index'])->name('encadrants2.index');
+    Route::post('encadrants2', [AdminEncadrantController::class, 'store'])->name('encadrants2.store');
+    Route::get('encadrants2/{encadrant}/edit', [AdminEncadrantController::class, 'edit'])->name('encadrants2.edit');
+    Route::put('encadrants2/{encadrant}', [AdminEncadrantController::class, 'update'])->name('encadrants2.update');
+    Route::delete('encadrants2/{encadrant}', [AdminEncadrantController::class, 'destroy'])->name('encadrants2.destroy');
+    Route::match(['get', 'post'], 'searchEncadrant', [SearchController::class, 'searchEncadrantAdmin'])->name('encadrants.searchEncadrantAdmin');
 
     Route::get('/statistiques', [StatistiquesController::class, 'statistiquesAdmin'])->name('statistiquesAdmin');
 });
@@ -105,6 +114,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->group(function () {
     Route::get('index', [HomeController::class, 'superadmin'])->name('superadmin');
 
+    Route::resource('encadrants', EncadrantController::class);
+    Route::match(['get', 'post'], 'searchEncadrant', [SearchController::class, 'searchEncadrant'])->name('encadrants.searchEncadrant');
+
     Route::resource('comptes', CompteController::class);
     Route::match(['get', 'post'], 'searchComptes', [SearchController::class, 'searchComptes'])->name('comptes.searchComptes');
 
@@ -113,9 +125,6 @@ Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->group(function 
 
     Route::resource('structuresAffectation', StructuresAffectationController::class);
     Route::match(['get', 'post'], 'searchAffectation', [SearchController::class, 'searchAffectation'])->name('structuresAffectation.searchAffectation');
-
-    Route::resource('encadrants', EncadrantController::class);
-    Route::match(['get', 'post'], 'searchEncadrant', [SearchController::class, 'searchEncadrant'])->name('encadrants.searchEncadrant');
 
     Route::resource('etablissements', EtablissementController::class);
     Route::match(['get', 'post'], 'searchEtablissement', [SearchController::class, 'searchEtablissement'])->name('etablissements.searchEtablissement');

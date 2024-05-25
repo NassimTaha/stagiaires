@@ -98,15 +98,16 @@ class StageController extends Controller
                 'reception_days' => 'required|string',
                 'end_date' => 'required|date|after:start_date',
                 'level' => 'required|in:Master,Licence,Doctorat,Ingenieur,TS',
-                'stagiare_count' => 'required|in:Monome,Binome,Trinome,Quadrinome',
+                'stagiaire_count' => 'required|in:Monome,Binome,Trinome,Quadrinome',
                 'encadrant_id' => 'required|exists:encadrants,id',
                 'etablissement_id' => 'required|exists:etablissements,id',
                 'structuresAffectation_id' => 'required|exists:structures_affectations,id',
             ]);
+            $validatedDataStage['cloture_date'] = $request->end_date;
             $stage = Stage::create($validatedDataStage);
 
             $count = 0;
-            switch ($request->input('stagiare_count')) {
+            switch ($request->input('stagiaire_count')) {
                 case 'Monome':
                     $count = 1;
                     break;
@@ -161,9 +162,25 @@ class StageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Stage $stage)
+    public function edit($id)
     {
-        //
+        $domaines = Domaine::where('structuresIAP_id', Auth::user()->structuresIAP_id)->get();
+        $specialites = Specialite::join('domaines', 'specialites.domaine_id', '=', 'domaines.id')
+            ->where('domaines.structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('domaines.structuresIAP_id')
+            ->orderBy('domaines.name')
+            ->orderBy('specialites.name')
+            ->select('specialites.*')
+            ->get();
+        $stage = Stage::findOrFail($id);
+        $stagiaires = $stage->stagiaires;
+        $encadrants = Encadrant::whereHas('structureAffectation.structuresIAP', function ($query) {
+            $query->where('id', Auth::user()->structuresIAP_id);
+        })->get();
+        $etablissements = Etablissement::orderBy('name')->get();
+        $structuresAffectations = StructuresAffectation::where('structuresIAP_id', '=', Auth::user()->structuresIAP_id)->get();
+
+        return view('admin.edit', compact('specialites', 'domaines', 'stage', 'stagiaires', 'structuresAffectations', 'etablissements', 'encadrants'));
     }
 
     /**
@@ -171,7 +188,65 @@ class StageController extends Controller
      */
     public function update(Request $request, Stage $stage)
     {
-        //
+
+        DB::beginTransaction();
+
+        try {
+            $validatedDataStage = $request->validate([
+                'stage_type' => 'required|in:pfe,immersion',
+                'theme' => 'required|string',
+                'specialite_id' => 'required|exists:specialites,id',
+                'start_date' => 'required|date',
+                'reception_days' => 'required|string',
+                'end_date' => 'required|date|after:start_date',
+                'level' => 'required|in:Master,Licence,Doctorat,Ingenieur,TS',
+                'stagiaire_count' => 'required|in:Monome,Binome,Trinome,Quadrinome',
+                'encadrant_id' => 'required|exists:encadrants,id',
+                'etablissement_id' => 'required|exists:etablissements,id',
+                'structuresAffectation_id' => 'required|exists:structures_affectations,id',
+            ]);
+
+            $stage->update($validatedDataStage);
+
+            $count = match ($request->input('stagiaire_count')) {
+                'Monome' => 1,
+                'Binome' => 2,
+                'Trinome' => 3,
+                'Quadrinome' => 4,
+            };
+
+            foreach ($stage->stagiaires as $key => $stagiaire) {
+                $index = $key + 1;
+                if ($key < $count) {
+                    $request->validate([
+                        "last_name{$index}" => 'required|string',
+                        "first_name{$index}" => 'required|string',
+                        "date_of_birth{$index}" => 'required|date',
+                        "place_of_birth{$index}" => 'required|string',
+                        "phone_number{$index}" => 'required|string',
+                        "email{$index}" => 'required|email',
+                        "blood_group{$index}" => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+                    ]);
+
+                    $stagiaire->update([
+                        'last_name' => $request->input("last_name{$index}"),
+                        'first_name' => $request->input("first_name{$index}"),
+                        'date_of_birth' => $request->input("date_of_birth{$index}"),
+                        'place_of_birth' => $request->input("place_of_birth{$index}"),
+                        'phone_number' => $request->input("phone_number{$index}"),
+                        'email' => $request->input("email{$index}"),
+                        'blood_group' => $request->input("blood_group{$index}"),
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->route('stages.index')->with('success', 'Modification effectuée avec succès');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('danger', 'Une Erreur veuillew remplir les champs');
+        }
     }
 
     /**
@@ -210,5 +285,45 @@ class StageController extends Controller
             // Handle any exceptions (e.g., structure not found)
             return response()->json(['error' => 'An error occurred while processing the request.'], 500);
         }
+    }
+
+    public function cloture(stage $stage)
+    {
+
+        $stages = (stage::all());
+        $stagiaires = (stagiaire::all());
+        return view('admin.cloture', compact('stages', 'stagiaires', 'stage'));
+    }
+
+    public function done(Request $request, Stage $stage)
+    {
+        $validatedData = $request->validate([
+            'memoire' => 'required|boolean',
+            'quitus' => 'required|array|min:1',
+            'quitus.*' => 'integer|exists:stagiaires,id',
+        ]);
+
+        $stagiairesWithQuitus = $validatedData['quitus'];
+        $hasQuitus = false;
+
+        foreach ($stagiairesWithQuitus as $stagiaireId) {
+            $stagiaire = Stagiaire::find($stagiaireId);
+            if ($stagiaire && $stagiaire->stage_id == $stage->id) {
+                $stagiaire->quitus = 1;
+                $stagiaire->save();
+                $hasQuitus = true;
+            }
+        }
+
+        if ($hasQuitus) {
+            $stage->memoire = $validatedData['memoire'];
+            $stage->cloture = 1;
+            $stage->cloture_date = $request->cloture_date;
+            $stage->save();
+        } else {
+            return back()->withErrors(['quitus' => 'At least one stagiaire must have quitus set.']);
+        }
+
+        return redirect()->route('stages.index')->with('success', 'Stage clôturé.');
     }
 }

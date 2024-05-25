@@ -3,7 +3,12 @@
      border-radius: 0.25rem; /* Bootstrap's default border radius */
      padding: 10px;
      margin: 10px 0;
-     background-color: #ffffff; /* White background */
+     background-color: #ffffff;
+     /*background-color: #E1E9E5;*/
+     /*background-color: #F3F4E5;*/
+     /*background-color: #ECF4E5;*/
+    /*background-color: #F1F1F1;*/
+     /*background-color: #E1DFEA; */
      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
  }
  body {

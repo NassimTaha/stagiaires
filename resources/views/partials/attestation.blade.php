@@ -31,13 +31,13 @@
     <br>
         <p class="h4" style="text-decoration: underline; text-align:center; font-size : 20px"><strong>ATTESTATION DE STAGE</strong></p>
     <br>
-    <p>Je soussigné, Monsieur XXXXXX XXXXXX, Directeur Gestion du Personnel, atteste par la présente que M/Mme/Mlle {{ $infostagiaire->last_name }} {{ $infostagiaire->first_name }}, Né(e) le <span style="white-space: nowrap;">{{ date('d/m/Y', strtotime($infostagiaire->date_of_birth)) }}</span> à <span style="white-space: nowrap;">{{ $infostagiaire->place_of_birth }}</span>, a effectué, au sein de Sonatrach/IAP, un stage pratique de <span style="white-space: nowrap;">
+    <p>Je soussigné, Monsieur {{$signataire->last_name}} {{$signataire->first_name}}, {{$signataire->function}}, atteste par la présente que M/Mme/Mlle {{ $infostagiaire->last_name }} {{ $infostagiaire->first_name }}, Né(e) le <span style="white-space: nowrap;">{{ date('d/m/Y', strtotime($infostagiaire->date_of_birth)) }}</span> à <span style="white-space: nowrap;">{{ $infostagiaire->place_of_birth }}</span>, a effectué, au sein de Sonatrach/IAP, un stage pratique de <span style="white-space: nowrap;">
         <?php
             $start_date = new DateTime($infostagiaire->Stage->start_date);
-            $end_date = new DateTime($infostagiaire->Stage->end_date);
-            $duration = $start_date->diff($end_date)->format("%a");
+            $cloture_date = new DateTime($infostagiaire->Stage->cloture_date);
+            $duration = $start_date->diff($cloture_date)->format("%a");
             echo $duration;
-        ?> jours</span> dans la spécialité <span style="white-space: nowrap;">{{ $infostagiaire->stage->specialite->name }}</span>, du <span style="white-space: nowrap;">{{ date('d/m/Y', strtotime($infostagiaire->Stage->start_date)) }}</span> au <span style="white-space: nowrap;">{{ date('d/m/Y', strtotime($infostagiaire->Stage->end_date)) }}</span>.</p>
+        ?> jours</span> dans la spécialité <span style="white-space: nowrap;">{{ $infostagiaire->stage->specialite->name }}</span>, du <span style="white-space: nowrap;">{{ date('d/m/Y', strtotime($infostagiaire->Stage->start_date)) }}</span> au <span style="white-space: nowrap;">{{ date('d/m/Y', strtotime($infostagiaire->Stage->cloture_date)) }}</span>.</p>
 
         
         
@@ -46,12 +46,12 @@
 
         <br>
             <div style="text-align: right;">
-                <p class="float-end">Fait à Boumerdes, le <?php echo date('Y/m/d'); ?></p>
+                <p class="float-end">Fait à {{$signataire->structuresIAP->name}}, le <?php echo date('Y/m/d'); ?></p>
             </div>
             <br>
 
-            <p><strong>Le Directeur Gestion du Personnel</strong></p>
-            <p><strong>XXXX Xxxxxx</strong></p>
+            <p><strong>Le {{$signataire->function}},</strong></p>
+            <p><strong>{{$signataire->last_name}} {{$signataire->first_name}}</strong></p>
             <br>
             <br>
             <br>

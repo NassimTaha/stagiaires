@@ -237,6 +237,41 @@ class SearchController extends Controller
         return view('superadmin.encadrants', compact('encadrants', 'structuresAffectations', 'structuresIAPs'));
     }
 
+    public function searchEncadrantAdmin(Request $request)
+    {
+        $userStructuresIAPId = Auth::user()->structuresIAP_id;
+        $query = Encadrant::query();
+
+        $searchParams = [
+            'structuresAffectation_id',
+        ];
+
+        if ($request->filled('name')) {
+            $query->where(function ($query) use ($request) {
+                $name = $request->input('name');
+                $query->where(DB::raw("CONCAT(last_name, ' ', first_name)"), 'like', '%' . $name . '%')
+                    ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . $name . '%');
+            });
+        }
+
+        $query->whereHas('structureAffectation', function ($query) use ($userStructuresIAPId) {
+            $query->where('structuresIAP_id', $userStructuresIAPId);
+        });
+
+        foreach ($searchParams as $param) {
+            $query->when($request->filled($param), function ($query) use ($request, $param) {
+                return $query->where($param, $request->input($param));
+            });
+        }
+
+        $encadrants = $query->paginate(10);
+        $encadrants->appends($request->all());
+        $structuresAffectations = StructuresAffectation::where('structuresIAP_id', $userStructuresIAPId)
+            ->orderby('type')->orderBy('name')->get();
+
+        return view('admin.encadrants', compact('encadrants', 'structuresAffectations'));
+    }
+
     public function searchEncadrant2(Request $request)
     {
         $query = Encadrant::query();
