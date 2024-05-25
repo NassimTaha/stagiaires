@@ -18,7 +18,7 @@
                                 <p class="h6">Structures IAP</p>
                                 <select id="structuresIAP_id" name="structuresIAP_id" class="form-select form-select-sm" aria-label=".form-select-sm example" required onchange="selectStructureAff()">
                                     @foreach ($structuresIAPs as $structuresIAP)
-                                    <option value="{{$structuresIAP->id}}" {{ old('structuresIAP_id', $encadrant->structuresIAP_id) == $structuresIAP->id ? 'selected' : '' }}>
+                                    <option value="{{$structuresIAP->id}}" {{ old('structuresIAP_id', $encadrant->structureAffectation->structuresIAP_id) == $structuresIAP->id ? 'selected' : '' }}>
                                         {{$structuresIAP->name}}
                                     </option>
                                     @endforeach
