@@ -6,6 +6,8 @@ use App\Models\Stagiaire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use function Laravel\Prompts\select;
+
 class StagiaireController extends Controller
 {
     /**
@@ -13,7 +15,15 @@ class StagiaireController extends Controller
      */
     public function index()
     {
-        $stagiaires = Stagiaire::orderBy('last_name')->orderBy('first_name')->paginate(20);
+        $user = Auth::user();
+
+        $stagiaires = Stagiaire::join('stages', 'stagiaires.stage_id', '=', 'stages.id')
+            ->join('structures_affectations', 'stages.structuresAffectation_id', '=', 'structures_affectations.id')
+            ->where('structures_affectations.structuresIAP_id', $user->structuresIAP_id)
+            ->orderBy('stagiaires.last_name')
+            ->orderBy('stagiaires.first_name')
+            ->select('stagiaires.*')
+            ->paginate(20);
 
         return view('admin.stagiaires', compact('stagiaires'));
     }
@@ -65,6 +75,25 @@ class StagiaireController extends Controller
     {
         //
     }
+
+    public function validerQuitus($id)
+    {
+        $stagiaire = Stagiaire::findOrFail($id);
+        $stagiaire->quitus = true;
+        $stagiaire->save();
+
+        return redirect()->route('stagiares.index')->with('success', 'Le quitus a été validé avec succès.');
+    }
+
+    public function invaliderQuitus($id)
+    {
+        $stagiaire = Stagiaire::findOrFail($id);
+        $stagiaire->quitus = false;
+        $stagiaire->save();
+
+        return redirect()->back()->with('success', 'Quitus annulé avec succès.');
+    }
+
 
     public function indexSecurity()
     {

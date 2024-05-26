@@ -17,6 +17,7 @@ class Stagiaire extends Model
         'phone_number',
         'email',
         'blood_group',
+        'attestation_date',
         'quitus',
         'stage_id',
     ];

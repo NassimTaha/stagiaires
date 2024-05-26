@@ -46,6 +46,15 @@ class SearchController extends Controller
     {
         $query = Stage::query();
 
+        $structuresIAPId = Auth::user()->structuresIAP_id;
+        $query->whereHas('structureAffectation', function ($query) use ($structuresIAPId) {
+            $query->where('structuresIAP_id', $structuresIAPId);
+        });
+
+        $query->where('year', date('Y'));
+
+        $query->where('stage_annule', 0);
+
         $searchParams = [
             'structuresAffectation_id',
             'encadrant_id',
@@ -53,7 +62,7 @@ class SearchController extends Controller
             'etablissement_id',
             'level',
             'theme',
-            'stagiare_count',
+            'stagiaire_count',
             'specialite_id',
         ];
 
@@ -78,7 +87,13 @@ class SearchController extends Controller
 
     public function searchResults2(Request $request)
     {
+
         $query = Stage::query();
+
+        $structuresIAPId = Auth::user()->structuresIAP_id;
+        $query->whereHas('structureAffectation', function ($query) use ($structuresIAPId) {
+            $query->where('structuresIAP_id', $structuresIAPId);
+        });
 
         $searchParams = [
             'structuresAffectation_id',
@@ -87,7 +102,7 @@ class SearchController extends Controller
             'etablissement_id',
             'level',
             'theme',
-            'stagiare_count',
+            'stagiaire_count',
             'year',
             'specialite_id',
         ];
@@ -239,8 +254,12 @@ class SearchController extends Controller
 
     public function searchEncadrantAdmin(Request $request)
     {
-        $userStructuresIAPId = Auth::user()->structuresIAP_id;
         $query = Encadrant::query();
+
+        $userStructuresIAPId = Auth::user()->structuresIAP_id;
+        $query->whereHas('structureAffectation', function ($query) use ($userStructuresIAPId) {
+            $query->where('structuresIAP_id', $userStructuresIAPId);
+        });
 
         $searchParams = [
             'structuresAffectation_id',
@@ -253,10 +272,6 @@ class SearchController extends Controller
                     ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . $name . '%');
             });
         }
-
-        $query->whereHas('structureAffectation', function ($query) use ($userStructuresIAPId) {
-            $query->where('structuresIAP_id', $userStructuresIAPId);
-        });
 
         foreach ($searchParams as $param) {
             $query->when($request->filled($param), function ($query) use ($request, $param) {
@@ -469,23 +484,14 @@ class SearchController extends Controller
     {
         $query = Stagiaire::query();
 
-        if ($request->filled('name')) {
-            $query->where(function ($query) use ($request) {
-                $name = $request->input('name');
-                $query->where(DB::raw("CONCAT(last_name, ' ', first_name)"), 'like', '%' . $name . '%')
-                    ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . $name . '%');
-            });
-        }
+        $query->whereHas('stage.structureAffectation', function ($query) {
+            $structuresIAPId = Auth::user()->structuresIAP_id;
+            $query->where('structuresIAP_id', $structuresIAPId);
+        });
 
-        $stagiaires = $query->paginate(10);
-        $stagiaires->appends($request->all());
-
-        return view('admin.stagiaires', compact('stagiaires'));
-    }
-
-    public function searchResultsStagiares2(Request $request)
-    {
-        $query = Stagiaire::query();
+        $query->whereHas('stage', function ($query) {
+            $query->where('stage_annule', 0);
+        });
 
         if ($request->filled('name')) {
             $query->where(function ($query) use ($request) {
@@ -498,12 +504,45 @@ class SearchController extends Controller
         $stagiaires = $query->paginate(20);
         $stagiaires->appends($request->all());
 
+        return view('admin.stagiaires', compact('stagiaires'));
+    }
+
+    public function searchResultsStagiares2(Request $request)
+    {
+        $query = Stagiaire::query();
+
+        $query->join('stages', 'stagiaires.stage_id', '=', 'stages.id')
+            ->join('structures_affectations', 'stages.structuresAffectation_id', '=', 'structures_affectations.id')
+            ->where('structures_affectations.structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->where('stages.memoire', 1)
+            ->where('stages.cloture', 1)
+            ->where('stages.stage_annule', 0)
+            ->where('stagiaires.quitus', 1);
+
+        if ($request->filled('name')) {
+            $name = $request->input('name');
+            $query->where(function ($query) use ($name) {
+                $query->where(DB::raw("CONCAT(last_name, ' ', first_name)"), 'like', '%' . $name . '%')
+                    ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . $name . '%');
+            });
+        }
+
+        $stagiaires = $query->orderBy('stagiaires.last_name')
+            ->orderBy('stagiaires.first_name')
+            ->select('stagiaires.*')
+            ->paginate(20);
+        $stagiaires->appends($request->all());
+
         return view('admin.attestation', compact('stagiaires'));
     }
 
     public function searchStagiaire(Request $request)
     {
         $query = Stagiaire::query();
+
+        $query->whereHas('stage', function ($query) {
+            $query->where('stage_annule', 0);
+        });
 
         if ($request->filled('name')) {
             $name = $request->input('name');
@@ -530,11 +569,15 @@ class SearchController extends Controller
     {
         $query = Stage::query();
 
+        $query->where('year', date('Y'));
+
+        $query->where('stage_annule', 0);
+
         $searchParams = [
             'stage_type',
             'etablissement_id',
             'level',
-            'stagiare_count',
+            'stagiaire_count',
             'specialite_id',
         ];
 
@@ -557,8 +600,6 @@ class SearchController extends Controller
             });
         }
 
-        $query->where('year', date('Y'));
-
         $nbr_stages = $query->count();
         $stages = $query->paginate(5);
         $stages->appends($request->all());
@@ -574,7 +615,7 @@ class SearchController extends Controller
             'stage_type',
             'etablissement_id',
             'level',
-            'stagiare_count',
+            'stagiaire_count',
             'specialite_id',
             'year',
         ];

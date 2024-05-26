@@ -83,6 +83,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::resource('stagiares', StagiaireController::class);
     Route::match(['get', 'post'], 'searchResultsStagiares1', [SearchController::class, 'searchResultsStagiares1'])->name('searchResultsStagiares1');
+    Route::post('/stagiaires/{id}/validerQuitus', [StagiaireController::class, 'validerQuitus'])->name('stagiaires.validerQuitus');
+    Route::post('/stagiaires/{id}/invaliderQuitus', [StagiaireController::class, 'invaliderQuitus'])->name('stagiaires.invaliderQuitus');
     Route::get('/attestation', [AttestationController::class, 'index'])->name('attestation');
     Route::match(['get', 'post'], 'searchResultsStagiares2', [SearchController::class, 'searchResultsStagiares2'])->name('searchResultsStagiares2');
     Route::get('/attestation/download/{stagiaire}', [AttestationController::class, 'imprimer'])->name('attestation.download');
@@ -94,6 +96,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::match(['get', 'post'], 'searchResults2', [SearchController::class, 'searchResults2'])->name('stages.searchResults2');
     Route::get('/stage/{stage}/cloture', [StageController::class, 'cloture'])->name('Stage.cloture');
     Route::post('/stage/done/{stage}', [StageController::class, 'done'])->name('stage.done');
+    Route::post('/stage/annuler/{stage}', [StageController::class, 'annuler'])->name('stage.annuler');
 
     Route::get('encadrants2', [AdminEncadrantController::class, 'index'])->name('encadrants2.index');
     Route::post('encadrants2', [AdminEncadrantController::class, 'store'])->name('encadrants2.store');

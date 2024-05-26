@@ -261,7 +261,7 @@
                     </option>
                 @endforeach
             </select>
-            <select hidden disabled id="nbr_stag" name="stagiare_count" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
+            <select hidden disabled id="nbr_stag" name="stagiaire_count" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
                 <option selected value="">-- Choisissez le nombre de stagiaires --</option>
                 <option value="Monome">Monome</option>
                 <option value="Binome">Binome</option>

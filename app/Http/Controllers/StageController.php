@@ -40,6 +40,7 @@ class StageController extends Controller
                 ->where('structures_affectations.structuresIAP_id', '=', $userStructuresIAPId);
         })
             ->where('stages.year', date('Y'))
+            ->where('stages.stage_annule', 0)
             ->orderBy('stages.structuresAffectation_id')
             ->orderBy('stages.encadrant_id')
             ->orderBy('stages.stage_type')
@@ -50,6 +51,7 @@ class StageController extends Controller
                 ->where('structures_affectations.structuresIAP_id', '=', $userStructuresIAPId);
         })
             ->where('stages.year', date('Y'))
+            ->where('stages.stage_annule', 0)
             ->orderBy('stages.structuresAffectation_id')
             ->orderBy('stages.encadrant_id')
             ->orderBy('stages.stage_type')
@@ -325,5 +327,14 @@ class StageController extends Controller
         }
 
         return redirect()->route('stages.index')->with('success', 'Stage clôturé.');
+    }
+
+    public function annuler(Request $request, Stage $stage)
+    {
+        $stage->stage_annule = 1;
+        $stage->observation = $request->observation;
+        $stage->save();
+
+        return redirect()->route('stages.index')->with('success', 'Stage annulé.');
     }
 }

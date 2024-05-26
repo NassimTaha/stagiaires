@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="table-responsive">
-            <table class="table table-sm table-dark table-bordered table-striped table-hover">
+            <table  class="table table-sm table-dark table-bordered table-striped table-hover">
                     <tr>
                         <th>Nom</th>
                         <th>Date De Naissance</th>
@@ -69,7 +69,7 @@
                 @csrf
             <div class="col d-flex">
                 <div style="width: 350px">
-                    <input name="name"  placeholder="Nom" class="form-control form-control-sm" type="text" aria-label=".form-control-sm example" autocomplete="off" required>
+                    <input name="name" placeholder="Nom" class="form-control form-control-sm" type="text" aria-label=".form-control-sm example" autocomplete="off" required>
                 </div>
                 <div>
                     <button name="recherche" type="submit" class="btn btn-sm btn-warning mx-1">
@@ -125,3 +125,22 @@
         @endif
 
 </x-masterAdmin>
+<script>
+    function searchStagiaire() {
+    var input = document.getElementById('searchInput').value.toLowerCase();
+    var rows = document.getElementById('stagiairesTable').getElementsByTagName('tr');
+    
+    for (var i = 0; i < rows.length; i++) {
+        var data = rows[i].getElementsByTagName('td')[0];
+        if (data) {
+            if (data.innerHTML.toLowerCase().indexOf(input) > -1) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }       
+    }
+    }
+</script>
+
+

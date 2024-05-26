@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('email');
             $table->boolean('quitus')->default(false);
             $table->enum('blood_group', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
+            $table->date('attestation_date')->nullable();
             $table->unsignedBigInteger('stage_id');
             $table->foreign('stage_id')->references('id')->on('stages')->onDelete('cascade');
             $table->timestamps();
