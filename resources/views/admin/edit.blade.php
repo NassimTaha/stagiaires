@@ -5,6 +5,7 @@
             @method('PUT')
         <p class="h2">Modifier un stage</p>
 
+        
         <div class="row">
             <div class="col-6">
                 <p class="h6">Type de stage</p>
