@@ -261,30 +261,25 @@ class StageController extends Controller
 
     public function quotaVerification(Request $request)
     {
-        // Retrieve the data sent from the JavaScript function
         $stageType = $request->input('stage_type');
         $structuresAffectationId = $request->input('structuresAffectation_id');
 
         try {
-            // Retrieve the structures affectation by its ID
             $structuresAffectation = StructuresAffectation::findOrFail($structuresAffectationId);
 
-            // Count the stages associated with the structures affectation
             $count = $structuresAffectation->stages()
                 ->where('stage_type', $stageType)
-                ->where('year', $structuresAffectation->year) // Assuming `year` exists in `StructuresAffectation`
+                ->where('year', $structuresAffectation->year)
+                ->where('stage_annule', 0)
                 ->count();
 
-            // Determine the quota based on the stage type
             $quota = $stageType === 'pfe' ? $structuresAffectation->quota_pfe : $structuresAffectation->quota_im;
 
-            // Return the count and quota in the response
             return response()->json([
                 'count' => $count,
                 'quota' => $quota,
             ]);
         } catch (\Exception $e) {
-            // Handle any exceptions (e.g., structure not found)
             return response()->json(['error' => 'An error occurred while processing the request.'], 500);
         }
     }
