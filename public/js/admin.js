@@ -200,8 +200,12 @@ function resetForm() {
             var specialite = document.getElementsByName('specialite_id')[0].value;
             var year = document.getElementsByName('year')[0].value;
             var theme = document.getElementsByName('theme')[0].value;
-
-            if (structuresAffectation || encadrant || stageType || etablissement || stagiaire_count || level || domaine || specialite || year || theme ) {
+            var stage_annuleOui = document.getElementsByName('stage_annuleOui')[0].checked;
+        var stage_annuleNon = document.getElementsByName('stage_annuleNon')[0].checked;
+        var clotureOui = document.getElementsByName('clotureOui')[0].checked;
+        var clotureNon = document.getElementsByName('clotureNon')[0].checked;
+    
+        if (structuresAffectation || stageType || etablissement || stagiaire_count || level || domaine || specialite || year || stage_annuleOui || stage_annuleNon || clotureOui || clotureNon) {
                 return true; 
             } else {
                 var myModal = new bootstrap.Modal(document.getElementById('searchModal'));
@@ -248,9 +252,115 @@ function rechercheEncadrant(){
         structureAffectation.disabled = true;
         name.hidden = false;
         name.disabled = false;
+    }else{
+        decoy.hidden = false;
+        structureAffectation.hidden = true;
+        structureAffectation.disabled = true;
+        name.hidden = true;
+        name.disabled = true;
     }
 }
 
+function rechercheAffectation(){
+    var type_recherche = document.getElementById('type_recherche').value;
+    var decoy = document.getElementById('decoy');
+    var typeee = document.getElementById('typeee');
+    var name = document.getElementById('nameee');
+    if(type_recherche == 'typeee'){
+        decoy.hidden = true;
+        decoy.disabled = true;
+        typeee.hidden = false;
+        typeee.disabled = false;
+        name.hidden = true;
+        name.disabled = true;
+    }else if(type_recherche == 'nameee'){
+        decoy.hidden = true;
+        decoy.disabled = true;
+        typeee.hidden = true;
+        typeee.disabled = true;
+        name.hidden = false;
+        name.disabled = false;
+    }else{
+        decoy.hidden = false;
+        typeee.hidden = true;
+        typeee.disabled = true;
+        name.hidden = true;
+        name.disabled = true;
+    }
+}
 
-        
+function activerSelect(){
+    var type = document.getElementById('type').value;
+    var parent_id = document.getElementById('parent_id');
+    if(type == 'Departement'){
+        parent_id.disabled = false;
+    }else{
+        parent_id.disabled = true;
+    }
+}
+
+function rechercheSpecialite(){
+    var type_recherche = document.getElementById('type_recherche').value;
+    var decoy = document.getElementById('decoy');
+    var domaine = document.getElementById('domaine');
+    var nameee = document.getElementById('nameee');
+    if(type_recherche == 'domaine'){
+        decoy.hidden = true;
+        domaine.hidden = false;
+        domaine.disabled = false;
+        nameee.hidden = true;
+        nameee.disabled = true;
+    }else if(type_recherche == 'nameee'){
+        decoy.hidden = true;
+        domaine.hidden = true;
+        domaine.disabled = true;
+        nameee.hidden = false;
+        nameee.disabled = false;
+    }else{
+        decoy.hidden = false;
+        domaine.hidden = true;
+        domaine.disabled = true;
+        nameee.hidden = true;
+        nameee.disabled = true;
+    }
+}
+
+function handleClotureOui() {
+    const clotureOui = document.getElementById('clotureOui');
+    const clotureNon = document.getElementById('clotureNon');
+    if(clotureNon.checked){
+        clotureOui.checked = true;
+        clotureNon.checked = false;
+    }
+}
+
+function handleClotureNon() {
+    const clotureOui = document.getElementById('clotureOui');
+    const clotureNon = document.getElementById('clotureNon');
+    if(clotureOui.checked){
+        clotureNon.checked = true;
+    clotureOui.checked = false;
+    }
+ 
+}
+
+function handleStageAnnuleOui() {
+    const stageAnnuleOui = document.getElementById('stage_annuleOui');
+    const stageAnnuleNon = document.getElementById('stage_annuleNon');
+    if(stageAnnuleNon.checked){
+        stageAnnuleOui.checked = true;
+        stageAnnuleNon.checked = false;
+    }
+    
+}
+
+function handleStageAnnuleNon() {
+    const stageAnnuleOui = document.getElementById('stage_annuleOui');
+    const stageAnnuleNon = document.getElementById('stage_annuleNon');
+    if(stageAnnuleOui.checked){
+        stageAnnuleNon.checked = true;
+        stageAnnuleOui.checked = false;
+    }
+    
+}      
         

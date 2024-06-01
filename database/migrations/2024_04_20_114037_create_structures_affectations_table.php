@@ -20,8 +20,15 @@ return new class extends Migration
             $table->unsignedInteger('year')->default(date('Y'));
             $table->unsignedBigInteger('structuresIAP_id');
             $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('structuresIAP_id')->references('id')->on('structures_i_a_p_s')->onDelete('cascade');
-            $table->foreign('parent_id')->references('id')->on('structures_affectations')->onDelete('cascade');
+            $table->foreign('structuresIAP_id')->references('id')->on('structures_i_a_p_s');
+            $table->foreign('parent_id')->references('id')->on('structures_affectations');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

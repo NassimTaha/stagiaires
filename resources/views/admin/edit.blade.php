@@ -313,7 +313,12 @@ function disableFields() {
     document.getElementById("theme").disabled = true;
     document.getElementById("domaine_id").disabled = true;
     document.getElementById("specialite_id").disabled = true;
-   // document.getElementById("reception_days").disabled = true;
+    document.getElementById('Dimanche').disabled = true;
+        document.getElementById('Lundi').disabled = true;
+        document.getElementById('Mardi').disabled = true;
+        document.getElementById('Mercredi').disabled = true;
+        document.getElementById('Samedi').disabled = true;
+        document.getElementById('Jeudi').disabled = true;
 }
 function enableFields() {
     document.getElementById("start_date").disabled = false;
@@ -325,7 +330,12 @@ function enableFields() {
     document.getElementById("theme").disabled = false;
     document.getElementById("domaine_id").disabled = false;
     document.getElementById("specialite_id").disabled = false;
-    //document.getElementById("reception_days").disabled = false;
+    document.getElementById('Dimanche').disabled = false;
+        document.getElementById('Lundi').disabled = false;
+        document.getElementById('Mardi').disabled = false;
+        document.getElementById('Mercredi').disabled = false;
+        document.getElementById('Samedi').disabled = false;
+        document.getElementById('Jeudi').disabled = false;
 }
 
 

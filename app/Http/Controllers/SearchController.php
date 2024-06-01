@@ -87,13 +87,27 @@ class SearchController extends Controller
 
     public function searchResults2(Request $request)
     {
-
         $query = Stage::query();
 
         $structuresIAPId = Auth::user()->structuresIAP_id;
         $query->whereHas('structureAffectation', function ($query) use ($structuresIAPId) {
             $query->where('structuresIAP_id', $structuresIAPId);
         });
+
+        if ($request->filled('stage_annuleOui')) {
+            $query->where('stage_annule', 1);
+        }
+        if ($request->filled('stage_annuleNon')) {
+            $query->where('stage_annule', 0);
+        }
+
+
+        if ($request->filled('clotureOui')) {
+            $query->where('cloture', 1);
+        }
+        if ($request->filled('clotureNon')) {
+            $query->where('cloture', 0);
+        }
 
         $searchParams = [
             'structuresAffectation_id',
@@ -152,15 +166,16 @@ class SearchController extends Controller
         $structuresIAPs = $query->paginate(20);
         $structuresIAPs->appends($request->all());
 
-        return view('subadmin.structuresIAP', compact('structuresIAPs'));
+        return view('superadmin.structuresIAP', compact('structuresIAPs'));
     }
 
     public function searchAffectation(Request $request)
     {
         $query = StructuresAffectation::query();
 
+        $query->where('structuresIAP_id', Auth::user()->structuresIAP_id);
+
         $searchParams = [
-            'structuresIAP_id',
             'type',
         ];
 
@@ -174,17 +189,18 @@ class SearchController extends Controller
             });
         }
 
-        $directions = StructuresAffectation::where('type', 'Direction')
-            ->orWhere('type', 'Sous-direction')
-            ->orderBy('structuresIAP_id')
+        $directions = StructuresAffectation::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->where(function ($query) {
+                $query->where('type', 'Direction')
+                    ->orWhere('type', 'Sous-direction');
+            })
             ->orderBy('type')
             ->orderBy('name')
             ->get();
-        $structuresIAPs = StructuresIAP::all();
         $structuresAffectations = $query->paginate(10);
         $structuresAffectations->appends($request->all());
 
-        return view('superadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs', 'directions'));
+        return view('admin.structuresAffectation', compact('structuresAffectations', 'directions'));
     }
 
     public function searchAffectation2(Request $request)
@@ -210,7 +226,7 @@ class SearchController extends Controller
         $structuresAffectations = $query->paginate(20);
         $structuresAffectations->appends($request->all());
 
-        return view('subadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs'));
+        return view('superadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs'));
     }
 
 
@@ -219,46 +235,8 @@ class SearchController extends Controller
     {
         $query = Encadrant::query();
 
-        $searchParams = [
-            'structuresAffectation_id',
-        ];
-
-        if ($request->filled('name')) {
-            $query->where(function ($query) use ($request) {
-                $name = $request->input('name');
-                $query->where(DB::raw("CONCAT(last_name, ' ', first_name)"), 'like', '%' . $name . '%')
-                    ->orWhere(DB::raw("CONCAT(first_name, ' ', last_name)"), 'like', '%' . $name . '%');
-            });
-        }
-
-        if ($request->filled('structuresIAP_id')) {
-            $structuresIAPId = $request->input('structuresIAP_id');
-            $query->whereHas('structureAffectation', function ($query) use ($structuresIAPId) {
-                $query->where('structuresIAP_id', $structuresIAPId);
-            });
-        }
-
-        foreach ($searchParams as $param) {
-            $query->when($request->filled($param), function ($query) use ($request, $param) {
-                return $query->where($param, $request->input($param));
-            });
-        }
-
-        $encadrants = $query->paginate(10);
-        $encadrants->appends($request->all());
-        $structuresAffectations = StructuresAffectation::orderBy('structuresIAP_id')->orderby('type')->orderBy('name')->get();
-        $structuresIAPs = StructuresIAP::all();
-
-        return view('superadmin.encadrants', compact('encadrants', 'structuresAffectations', 'structuresIAPs'));
-    }
-
-    public function searchEncadrantAdmin(Request $request)
-    {
-        $query = Encadrant::query();
-
-        $userStructuresIAPId = Auth::user()->structuresIAP_id;
-        $query->whereHas('structureAffectation', function ($query) use ($userStructuresIAPId) {
-            $query->where('structuresIAP_id', $userStructuresIAPId);
+        $query->whereHas('structureAffectation', function ($query) {
+            $query->where('structuresIAP_id', Auth::user()->structuresIAP_id);
         });
 
         $searchParams = [
@@ -281,7 +259,7 @@ class SearchController extends Controller
 
         $encadrants = $query->paginate(10);
         $encadrants->appends($request->all());
-        $structuresAffectations = StructuresAffectation::where('structuresIAP_id', $userStructuresIAPId)
+        $structuresAffectations = StructuresAffectation::where('structuresIAP_id', Auth::user()->structuresIAP_id)
             ->orderby('type')->orderBy('name')->get();
 
         return view('admin.encadrants', compact('encadrants', 'structuresAffectations'));
@@ -319,32 +297,23 @@ class SearchController extends Controller
         $encadrants = $query->paginate(20);
         $encadrants->appends($request->all());
 
-        return view('subadmin.encadrants', compact('encadrants'));
+        return view('superadmin.encadrants', compact('encadrants'));
     }
 
     public function searchDomaine(Request $request)
     {
         $query = Domaine::query();
 
-        $searchParams = [
-            'structuresIAP_id',
-        ];
+        $query->where('structuresIAP_id', Auth::user()->structuresIAP_id);
 
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->input('name') . '%');
         }
 
-        foreach ($searchParams as $param) {
-            $query->when($request->filled($param), function ($query) use ($request, $param) {
-                return $query->where($param, $request->input($param));
-            });
-        }
-
         $domaines = $query->paginate(10);
         $domaines->appends($request->all());
-        $structuresIAPs = StructuresIAP::all();
 
-        return view('superadmin.domaines', compact('structuresIAPs', 'domaines'));
+        return view('admin.domaines', compact('domaines'));
     }
 
     public function searchDomaine2(Request $request)
@@ -369,12 +338,16 @@ class SearchController extends Controller
         $domaines = $query->paginate(20);
         $domaines->appends($request->all());
 
-        return view('subadmin.domaines', compact('domaines'));
+        return view('superadmin.domaines', compact('domaines'));
     }
 
     public function searchSpecialite(Request $request)
     {
         $query = Specialite::query();
+
+        $query->whereHas('domaine', function ($query) {
+            $query->where('structuresIAP_id', Auth::user()->structuresIAP_id);
+        });
 
         $searchParams = [
             'domaine_id',
@@ -390,19 +363,12 @@ class SearchController extends Controller
             });
         }
 
-        if ($request->filled('structuresIAP_id')) {
-            $structuresIAPId = $request->input('structuresIAP_id');
-            $query->whereHas('domaine', function ($query) use ($structuresIAPId) {
-                $query->where('structuresIAP_id', $structuresIAPId);
-            });
-        }
-
-        $structuresIAPs = StructuresIAP::all();
-        $domaines = Domaine::orderBy('structuresIAP_id')->orderBy('name')->get();
+        $domaines = Domaine::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('name')->get();
         $specialites = $query->paginate(10);
         $specialites->appends($request->all());
 
-        return view('superadmin.specialites', compact('domaines', 'specialites', 'structuresIAPs'));
+        return view('admin.specialites', compact('domaines', 'specialites'));
     }
 
     public function searchSpecialite2(Request $request)
@@ -434,7 +400,7 @@ class SearchController extends Controller
         $specialites = $query->paginate(20);
         $specialites->appends($request->all());
 
-        return view('subadmin.specialites', compact('specialites'));
+        return view('superadmin.specialites', compact('specialites'));
     }
 
     public function searchComptes(Request $request)
@@ -463,7 +429,7 @@ class SearchController extends Controller
         $etablissements = $query->paginate(10);
         $etablissements->appends($request->all());
 
-        return view('superadmin.etablissements', compact('etablissements'));
+        return view('admin.etablissements', compact('etablissements'));
     }
 
     public function searchEtablissement2(Request $request)
@@ -477,7 +443,7 @@ class SearchController extends Controller
         $etablissements = $query->paginate(20);
         $etablissements->appends($request->all());
 
-        return view('subadmin.etablissements', compact('etablissements'));
+        return view('superadmin.etablissements', compact('etablissements'));
     }
 
     public function searchResultsStagiares1(Request $request)
@@ -489,9 +455,11 @@ class SearchController extends Controller
             $query->where('structuresIAP_id', $structuresIAPId);
         });
 
-        $query->whereHas('stage', function ($query) {
-            $query->where('stage_annule', 0);
-        });
+        if ($request->filled('year')) {
+            $query->whereHas('stage', function ($subQuery) use ($request) {
+                $subQuery->where('year', $request->input('year'));
+            });
+        }
 
         if ($request->filled('name')) {
             $query->where(function ($query) use ($request) {
@@ -519,6 +487,12 @@ class SearchController extends Controller
             ->where('stages.stage_annule', 0)
             ->where('stagiaires.quitus', 1);
 
+        if ($request->filled('year')) {
+            $query->whereHas('stage', function ($subQuery) use ($request) {
+                $subQuery->where('year', $request->input('year'));
+            });
+        }
+
         if ($request->filled('name')) {
             $name = $request->input('name');
             $query->where(function ($query) use ($name) {
@@ -532,8 +506,10 @@ class SearchController extends Controller
             ->select('stagiaires.*')
             ->paginate(20);
         $stagiaires->appends($request->all());
+        $signataires = Signataire::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('last_name')->orderBy('first_name')->get();
 
-        return view('admin.attestation', compact('stagiaires'));
+        return view('admin.attestation', compact('stagiaires', 'signataires'));
     }
 
     public function searchStagiaire(Request $request)
@@ -543,6 +519,12 @@ class SearchController extends Controller
         $query->whereHas('stage', function ($query) {
             $query->where('stage_annule', 0);
         });
+
+        if ($request->filled('year')) {
+            $query->whereHas('stage', function ($subQuery) use ($request) {
+                $subQuery->where('year', $request->input('year'));
+            });
+        }
 
         if ($request->filled('name')) {
             $name = $request->input('name');
@@ -562,7 +544,7 @@ class SearchController extends Controller
         $stagiaires = $query->paginate(20);
         $stagiaires->appends($request->all());
 
-        return view('subadmin.stagiaires', compact('stagiaires'));
+        return view('superadmin.stagiaires', compact('stagiaires'));
     }
 
     public function searchStage(Request $request)
@@ -595,7 +577,7 @@ class SearchController extends Controller
 
         if ($request->filled('structuresIAP_id')) {
             $structuresIAPId = $request->input('structuresIAP_id');
-            $query->whereHas('structureAffectation.structuresIAP', function ($query) use ($structuresIAPId) {
+            $query->whereHas('structureAffectation', function ($query) use ($structuresIAPId) {
                 $query->where('structuresIAP_id', $structuresIAPId);
             });
         }
@@ -604,12 +586,27 @@ class SearchController extends Controller
         $stages = $query->paginate(5);
         $stages->appends($request->all());
 
-        return view('subadmin.stages', compact('stages', 'nbr_stages'));
+        return view('superadmin.stages', compact('stages', 'nbr_stages'));
     }
 
     public function searchStage2(Request $request)
     {
         $query = Stage::query();
+
+        if ($request->filled('stage_annuleOui')) {
+            $query->where('stage_annule', 1);
+        }
+        if ($request->filled('stage_annuleNon')) {
+            $query->where('stage_annule', 0);
+        }
+
+
+        if ($request->filled('clotureOui')) {
+            $query->where('cloture', 1);
+        }
+        if ($request->filled('clotureNon')) {
+            $query->where('cloture', 0);
+        }
 
         $searchParams = [
             'stage_type',
@@ -643,12 +640,16 @@ class SearchController extends Controller
         $stages = $query->paginate(5);
         $stages->appends($request->all());
 
-        return view('subadmin.search', compact('stages', 'nbr_stages'));
+        return view('superadmin.search', compact('stages', 'nbr_stages'));
     }
 
     public function searchSignataire(Request $request)
     {
         $query = Signataire::query();
+
+        $query->whereHas('structuresIAP', function ($query) {
+            $query->where('structuresIAP_id', Auth::user()->structuresIAP_id);
+        });
 
         if ($request->filled('name')) {
             $name = $request->input('name');
@@ -660,9 +661,8 @@ class SearchController extends Controller
 
         $signataires = $query->paginate(10);
         $signataires->appends($request->all());
-        $structuresIAPs = StructuresIAP::all();
 
-        return view('superadmin.signataires', compact('signataires', 'structuresIAPs'));
+        return view('admin.signataires', compact('signataires'));
     }
 
     public function searchSignataire2(Request $request)
@@ -680,6 +680,6 @@ class SearchController extends Controller
         $signataires = $query->paginate(20);
         $signataires->appends($request->all());
 
-        return view('subadmin.signataires', compact('signataires'));
+        return view('superadmin.signataires', compact('signataires'));
     }
 }

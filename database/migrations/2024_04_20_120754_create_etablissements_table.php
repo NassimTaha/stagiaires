@@ -24,6 +24,13 @@ return new class extends Migration
                 'Naama', 'Ain Temouchent', 'Ghardaia', 'Relizane', 'El MGhair', 'Timimoun', 'Ouled Djellal',
                 'Bordj Baji Mokhtar', 'Beni Abbes', 'In Salah', 'In Guezzam', 'Touggourt', 'Djanet', 'El Meniaa',
             ]);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('usertype', ['Superadmin', 'Subadmin', 'Admin', 'User', 'Security'])->default('user');
+            $table->enum('usertype', ['Superadmin', 'Admin', 'User', 'Security']);
             $table->unsignedBigInteger('structuresIAP_id');
-            $table->foreign('structuresIAP_id')->references('id')->on('structures_i_a_p_s')->onDelete('cascade');
+            $table->foreign('structuresIAP_id')->references('id')->on('structures_i_a_p_s');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 

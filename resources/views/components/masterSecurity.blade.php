@@ -11,7 +11,7 @@
     <link href="{{ asset('bootstrap-5.2.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <title>{{$title}}</title>
   </head>
-  <body>
+  <body style="background-color:  #F0EAD6">
     @include('partials.navSecurity')
     <div class="container my-2">
       @include('partials.flashbag')

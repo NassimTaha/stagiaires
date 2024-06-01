@@ -13,34 +13,28 @@ use App\Models\StructuresAffectation;
 use App\Models\StructuresIAP;
 use Illuminate\Http\Request;
 
-class SubadminController extends Controller
-{
 
+class SuperadminController extends Controller
+{
     public function domaines()
     {
 
         $domaines = Domaine::orderBY('structuresIAP_id')->paginate(20);
         $structuresIAPs = StructuresIAP::all();
-        return view('subadmin.domaines', compact('domaines', 'structuresIAPs'));
-    }
-
-    public function structuresIAP()
-    {
-        $structuresIAPs = StructuresIAP::paginate(20);
-        return view('subadmin.structuresIAP', compact('structuresIAPs'));
+        return view('superadmin.domaines', compact('domaines', 'structuresIAPs'));
     }
 
     public function structuresAffectation()
     {
         $structuresIAPs = StructuresIAP::all();
         $structuresAffectations = StructuresAffectation::orderBy('structuresIAP_id')->orderby('type')->orderBy('name')->paginate(20);
-        return view('subadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs'));
+        return view('superadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs'));
     }
 
     public function etablissements()
     {
         $etablissements = Etablissement::orderBy('wilaya')->paginate(20);
-        return view('subadmin.etablissements', compact('etablissements'));
+        return view('superadmin.etablissements', compact('etablissements'));
     }
 
     public function encadrants()
@@ -57,7 +51,7 @@ class SubadminController extends Controller
             ->paginate(20);
         $structuresAffectations = StructuresAffectation::orderBy('structuresIAP_id')->orderby('type')->orderBy('name')->get();
         $structuresIAPs = StructuresIAP::all();
-        return view('subadmin.encadrants', compact('encadrants', 'structuresAffectations', 'structuresIAPs'));
+        return view('superadmin.encadrants', compact('encadrants', 'structuresAffectations', 'structuresIAPs'));
     }
 
     public function specialites()
@@ -70,7 +64,7 @@ class SubadminController extends Controller
             ->select('specialites.*')
             ->paginate(20);
         $structuresIAPs = StructuresIAP::all();
-        return view('subadmin.specialites', compact('domaines', 'specialites', 'structuresIAPs'));
+        return view('superadmin.specialites', compact('domaines', 'specialites', 'structuresIAPs'));
     }
 
     public function stagiaires()
@@ -82,10 +76,11 @@ class SubadminController extends Controller
             ->orderBy('structures_i_a_p_s.id')
             ->orderBY('stagiaires.last_name')
             ->orderBY('stagiaires.first_name')
+            ->where('stages.stage_annule', 0)
             ->select('stagiaires.*')
             ->paginate(20);
         $structuresIAPs = StructuresIAP::all();
-        return view('subadmin.stagiaires', compact('stagiaires', 'structuresIAPs'));
+        return view('superadmin.stagiaires', compact('stagiaires', 'structuresIAPs'));
     }
 
     public function stages()
@@ -106,11 +101,12 @@ class SubadminController extends Controller
             ->orderBy('structures_affectations.type')
             ->orderBy('structures_affectations.name')
             ->orderBy('stages.start_date')
-            ->select('stages.*')
             ->where('stages.year', date('Y'))
+            ->where('stages.stage_annule', 0)
+            ->select('stages.*')
             ->paginate(5);
         $structuresIAPs = StructuresIAP::all();
-        return view('subadmin.stages', compact('stages', 'domaines', 'specialites', 'etablissements', 'structuresIAPs'));
+        return view('superadmin.stages', compact('stages', 'domaines', 'specialites', 'etablissements', 'structuresIAPs'));
     }
 
     public function rechercheStage()
@@ -124,12 +120,12 @@ class SubadminController extends Controller
             ->get();
         $etablissements = Etablissement::orderBy('name')->get();
         $structuresIAPs = StructuresIAP::all();
-        return view('subadmin.search', compact('domaines', 'specialites', 'etablissements', 'structuresIAPs'));
+        return view('superadmin.search', compact('domaines', 'specialites', 'etablissements', 'structuresIAPs'));
     }
 
     public function signataires()
     {
         $signataires = Signataire::orderBy('last_name')->orderBy('first_name')->paginate(20);
-        return view('subadmin.signataires', compact('signataires'));
+        return view('superadmin.signataires', compact('signataires'));
     }
 }

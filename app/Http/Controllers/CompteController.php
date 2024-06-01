@@ -21,7 +21,7 @@ class CompteController extends Controller
             'name' => 'required|string|max:255|unique:users,name',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'usertype' => 'required|in:Superadmin,Subadmin,Admin,User,Security',
+            'usertype' => 'required|in:Superadmin,Admin,User,Security',
             'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
         ]);
 
@@ -44,7 +44,7 @@ class CompteController extends Controller
             'name' => 'required|string|max:255|unique:users,name,' . $compte->id,
             'email' => 'required|email|max:255|unique:users,email,' . $compte->id,
             'password' => 'required|string|min:8|confirmed',
-            'usertype' => 'required|in:Superadmin,Subadmin,Admin,User,Security',
+            'usertype' => 'required|in:Superadmin,Admin,User,Security',
             'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
         ]);
 

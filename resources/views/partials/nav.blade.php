@@ -15,14 +15,25 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{{route('structuresIAP.index')}}">Structures IAP <i class="bi bi-houses-fill"></i></a></li>
-              <li><a class="dropdown-item" href="{{route('signataires.index')}}">Signataires <i class="bi bi-vector-pen"></i></a></li>
-              <li><a class="dropdown-item" href="{{route('structuresAffectation.index')}}">Structures D'affectation <i class="bi bi-building-fill"></i></a></li>
-              <li><a class="dropdown-item" href="{{route('encadrants.index')}}">Encadrants <i class="bi bi-person-lines-fill"></i></a></li>
-              <li><a class="dropdown-item" href="{{route('domaines.index')}}">Domaines <i class="bi bi-journals"></i></a></li>
-              <li><a class="dropdown-item" href="{{route('specialites.index')}}">Spécialités <i class="bi bi-bookmarks-fill"></i></a></li>
+              <li><a class="dropdown-item" href="{{route('signataires')}}">Signataires <i class="bi bi-vector-pen"></i></a></li>
+              <li><a class="dropdown-item" href="{{route('structuresAffectation')}}">Structures D'affectation <i class="bi bi-building-fill"></i></a></li>
+              <li><a class="dropdown-item" href="{{route('encadrants')}}">Encadrants <i class="bi bi-person-lines-fill"></i></a></li>
+              <li><a class="dropdown-item" href="{{route('domaines')}}">Domaines <i class="bi bi-journals"></i></a></li>
+              <li><a class="dropdown-item" href="{{route('specialites')}}">Spécialités <i class="bi bi-bookmarks-fill"></i></a></li>
+
             </ul>
           </li>
-          <a class="nav-link {{ request()->routeIs('etablissements.index') ? 'active' : '' }}" href="{{ route('etablissements.index') }}">Établissements <i class="bi bi-buildings"></i></a>
+          <a class="nav-link" href="{{route('etablissements')}}">Établissements <i class="bi bi-buildings"></i></a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Stages
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{route('stages')}}">Liste des stages en cours</a></li>
+              <li><a class="dropdown-item" href="{{route('rechercheStage')}}">Rechercher un stage</a></li>
+              <li><a class="dropdown-item" href="{{route('stagiaires')}}">Liste des stagiaires</a></li>
+            </ul>
+          </li>
 
 
           <div class="hidden sm:flex sm:items-center sm:ms-6" style="margin-left: 310px">

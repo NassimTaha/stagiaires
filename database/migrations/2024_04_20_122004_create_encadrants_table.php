@@ -20,7 +20,14 @@ return new class extends Migration
             $table->string('function');
             $table->string('fibre_sh');
             $table->unsignedBigInteger('structuresAffectation_id');
-            $table->foreign('structuresAffectation_id')->references('id')->on('structures_affectations')->onDelete('cascade');
+            $table->foreign('structuresAffectation_id')->references('id')->on('structures_affectations');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

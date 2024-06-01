@@ -13,8 +13,9 @@
                 <i class="bi bi-arrow-left"></i> Retour
             </a>
         </div>
-        <div class="table-responsive">
-            <table class="table table-sm table-dark table-bordered table-striped table-hover">
+        <div class="table-wrapper">
+            <table class="fl-table ">
+                <thead>
                 <tr>
                     <th>Nom</th>
                     <th>N° de tel</th>
@@ -26,8 +27,10 @@
                     <th>Clôture</th>
                     <th>Quitus</th>
         
-                </tr>   
-                @foreach ($stagiaires as $stagiaire)
+                </tr> 
+            </thead>  
+            <tbody>
+                @foreach ($stagiaires as $stagiaire)             
                 <tr>
                     <td>{{$stagiaire->last_name}} {{$stagiaire->first_name}}</td>
                     <td>{{$stagiaire->phone_number}}</td>
@@ -49,27 +52,27 @@
                     <td style="text-align: center;">
                         @if ($stagiaire->Stage->cloture == 1)
                         <a class="btn btn-sm">
-                            <i class="bi bi-check-circle-fill text-light"></i>
+                            <i class="bi bi-check-circle-fill text-dark"></i>
                         </a>                         
                         @else
                         <a class="btn btn-sm">
-                            <i class="bi bi-x-circle-fill text-warning"></i>
+                            <i class="bi bi-x-circle-fill text-danger"></i>
                         </a>
                         @endif
                     </td>
                     <td style="text-align: center;">
                         @if ($stagiaire->quitus == 1)
                         <a class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#invaliderModal{{$stagiaire->id}}">
-                            <i class="bi bi-check-circle-fill text-light"></i>
+                            <i class="bi bi-check-circle-fill text-dark"></i>
                         </a>                        
                         @else
                             @if ($stagiaire->Stage->cloture == 1)
                                     <a class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{$stagiaire->id}}">
-                                        <i class="bi bi-x-circle-fill text-warning"></i>
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
                                     </a>
                             @else
                                     <a class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#cloture0modal" >
-                                        <i class="bi bi-x-circle-fill text-warning"></i>
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
                                     </a>
                             @endif
                                 
@@ -116,9 +119,11 @@
                         </div>
                     </div>                    
                 </tr>
+                </tbody>
+            
                    @endforeach
             </table>
-            </div>
+        </div>
             <div class="paginator">
                 {{ $stagiaires->links() }}
             </div>
@@ -133,6 +138,16 @@
             <form  method="POST" action="{{ route('searchResultsStagiares1')}}">
                 @csrf
             <div class="col d-flex">
+                <select style="width: 150px" name="year" id="year" class="form-select form-select-sm flex-grow-1 me-2" aria-label=".form-select-sm example">
+                    <option selected  value="">Année</option>
+                    <?php
+                    $currentYear = date('Y');
+                    for ($i = 0; $i < 10; $i++) {
+                        $year = $currentYear - $i;
+                        echo "<option value=\"$year\">$year</option>";
+                    }
+                    ?>
+                </select> 
                 <div style="width: 350px">
                     <input name="name"  placeholder="Nom" class="form-control form-control-sm" type="text" aria-label=".form-control-sm example" autocomplete="off" required>
                 </div>
@@ -144,8 +159,10 @@
             </div>
             </form>
         </div>
-        <div class="table-responsive">
-        <table class="table table-sm table-dark table-bordered table-striped table-hover">
+        <hr>
+        <div class="table-wrapper">
+            <table class="fl-table ">
+                <thead>
                 <tr>
                     <th>Nom</th>
                     <th>N° de tel</th>
@@ -157,8 +174,10 @@
                     <th>Clôture</th>
                     <th>Quitus</th>
         
-                </tr>   
+                </tr> 
+            </thead>  
                 @foreach ($stagiaires as $stagiaire)
+                <tbody>
                 <tr>
                     <td>{{$stagiaire->last_name}} {{$stagiaire->first_name}}</td>
                     <td>{{$stagiaire->phone_number}}</td>
@@ -180,27 +199,27 @@
                     <td style="text-align: center;">
                         @if ($stagiaire->Stage->cloture == 1)
                         <a class="btn btn-sm">
-                            <i class="bi bi-check-circle-fill text-light"></i>
+                            <i class="bi bi-check-circle-fill text-dark"></i>
                         </a>                         
                         @else
                         <a class="btn btn-sm">
-                            <i class="bi bi-x-circle-fill text-warning"></i>
+                            <i class="bi bi-x-circle-fill text-danger"></i>
                         </a>
                         @endif
                     </td>
                     <td style="text-align: center;">
                         @if ($stagiaire->quitus == 1)
                         <a class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#invaliderModal{{$stagiaire->id}}">
-                            <i class="bi bi-check-circle-fill text-light"></i>
+                            <i class="bi bi-check-circle-fill text-dark"></i>
                         </a>                        
                         @else
                             @if ($stagiaire->Stage->cloture == 1)
                                     <a class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{$stagiaire->id}}">
-                                        <i class="bi bi-x-circle-fill text-warning"></i>
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
                                     </a>
                             @else
                                     <a class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#cloture0modal" >
-                                        <i class="bi bi-x-circle-fill text-warning"></i>
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
                                     </a>
                             @endif
                                 
@@ -247,10 +266,13 @@
                         </div>
                     </div>                    
                 </tr>
+                </tbody>
+            
                    @endforeach
             </table>
         </div>
-        <div class="paginator">
+      
+        <div class="paginator mt-2">
             {{ $stagiaires->links() }}
         </div>
         @endif

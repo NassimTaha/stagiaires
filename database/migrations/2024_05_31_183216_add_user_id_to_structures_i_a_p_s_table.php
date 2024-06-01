@@ -11,19 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('domaines', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger('structuresIAP_id');
-            $table->foreign('structuresIAP_id')->references('id')->on('structures_i_a_p_s');
+        Schema::table('structures_i_a_p_s', function (Blueprint $table) {
             $table->unsignedBigInteger('created_by')->nullable();
             $table->foreign('created_by')->references('id')->on('users');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->foreign('updated_by')->references('id')->on('users');
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->foreign('deleted_by')->references('id')->on('users');
-            $table->softDeletes();
-            $table->timestamps();
         });
     }
 
@@ -32,6 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('domaines');
+        Schema::table('structures_i_a_p_s', function (Blueprint $table) {
+            //
+        });
     }
 };

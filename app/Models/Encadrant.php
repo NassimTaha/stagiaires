@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Encadrant extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'first_name',
@@ -16,7 +18,10 @@ class Encadrant extends Model
         'email',
         'function',
         'fibre_sh',
-        'structuresAffectation_id'
+        'structuresAffectation_id',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     public function structureAffectation()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Signataire;
 use App\Models\StructuresIAP;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SignataireController extends Controller
 {
@@ -13,9 +14,9 @@ class SignataireController extends Controller
      */
     public function index()
     {
-        $signataires = Signataire::orderBy('last_name')->orderBy('first_name')->paginate(10);
-        $structuresIAPs = StructuresIAP::all();
-        return view('superadmin.signataires', compact('signataires', 'structuresIAPs'));
+        $signataires = Signataire::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('last_name')->orderBy('first_name')->paginate(10);
+        return view('admin.signataires', compact('signataires'));
     }
 
     /**
@@ -34,9 +35,11 @@ class SignataireController extends Controller
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
             'function' => 'required|in:Directeur Gestion du Personnel,Directeur de l’école'
         ]);
+        $validatedData['structuresIAP_id'] = Auth::user()->structuresIAP_id;
+        $validatedData['created_by'] = Auth::user()->id;
+        $validatedData['updated_by'] = Auth::user()->id;
 
         Signataire::create($validatedData);
 
@@ -56,9 +59,9 @@ class SignataireController extends Controller
      */
     public function edit(Signataire $signataire)
     {
-        $signataires = Signataire::orderBy('last_name')->orderBy('first_name')->paginate(10);
-        $structuresIAPs = StructuresIAP::all();
-        return view('superadmin.signataires', compact('signataires', 'structuresIAPs', 'signataire'));
+        $signataires = Signataire::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('last_name')->orderBy('first_name')->paginate(10);
+        return view('admin.signataires', compact('signataires', 'signataire'));
     }
 
     /**
@@ -69,9 +72,9 @@ class SignataireController extends Controller
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
             'function' => 'required|in:Directeur Gestion du Personnel,Directeur de l’école'
         ]);
+        $validatedData['updated_by'] = Auth::user()->id;
 
         $signataire->fill($validatedData)->save();
 
@@ -83,6 +86,8 @@ class SignataireController extends Controller
      */
     public function destroy(Signataire $signataire)
     {
+        $signataire->deleted_by = Auth::user()->id;
+        $signataire->save();
         $signataire->delete();
         return redirect()->route('signataires.index')->with('success', 'Signataire désactivé.');
     }

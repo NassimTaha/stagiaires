@@ -92,15 +92,17 @@
     </div>
 
 
-  
-    <div class="table-responsive">
-    <table class="table table-sm table-dark table-bordered table-striped table-hover">
+    <div class="table-wrapper">
+        <table class="fl-table">  
+            <thead>
+
 
         <tr>
             <th>Nom</th>
             <th style="text-align: center;">Options</th>
         </tr>
-
+            </thead>
+            <tbody>
     @foreach ($structuresIAPs as $structuresIAP)
         <tr>
             <td>{{$structuresIAP->name}}</td>
@@ -123,7 +125,7 @@
                 </div> 
             </td>
         </tr>
-
+            </tbody>
         <div class="modal fade" id="exampleModal{{$structuresIAP->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -148,7 +150,7 @@
     @endforeach
     </table>
     </div>
-    <div class="paginator">
+    <div class="paginator mt-2">
         {{ $structuresIAPs->links() }}
     </div>
 

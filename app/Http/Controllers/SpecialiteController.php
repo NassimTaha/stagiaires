@@ -6,6 +6,7 @@ use App\Models\Domaine;
 use App\Models\Specialite;
 use App\Models\StructuresIAP;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SpecialiteController extends Controller
 {
@@ -14,15 +15,15 @@ class SpecialiteController extends Controller
      */
     public function index()
     {
-        $structuresIAPs = StructuresIAP::all();
-        $domaines = Domaine::orderBy('structuresIAP_id')->orderBy('name')->get();
+        $domaines = Domaine::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('name')->get();
         $specialites = Specialite::join('domaines', 'specialites.domaine_id', '=', 'domaines.id')
-            ->orderBy('domaines.structuresIAP_id')
+            ->where('domaines.structuresIAP_id', Auth::user()->structuresIAP_id)
             ->orderBy('domaines.name')
             ->orderBy('specialites.name')
             ->select('specialites.*')
             ->paginate(10);
-        return view('superadmin.specialites', compact('domaines', 'specialites', 'structuresIAPs'));
+        return view('admin.specialites', compact('domaines', 'specialites'));
     }
 
     /**
@@ -40,6 +41,8 @@ class SpecialiteController extends Controller
     {
         $name = $request->name;
         $domaine_id = $request->domaine_id;
+        $created_by = Auth::user()->id;
+        $updated_by = Auth::user()->id;
         $request->validate([
             'name' => 'required|string',
             'domaine_id' => 'required|exists:domaines,id',
@@ -47,6 +50,8 @@ class SpecialiteController extends Controller
         Specialite::create([
             'name' => $name,
             'domaine_id' => $domaine_id,
+            'created_by' => $created_by,
+            'updated_by' => $updated_by,
         ]);
 
         return to_route('specialites.index')->with('success', 'Spécialité ajouté.');
@@ -65,15 +70,15 @@ class SpecialiteController extends Controller
      */
     public function edit(Specialite $specialite)
     {
-        $structuresIAPs = StructuresIAP::all();
-        $domaines = Domaine::orderBy('structuresIAP_id')->orderBy('name')->get();
+        $domaines = Domaine::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('name')->get();
         $specialites = Specialite::join('domaines', 'specialites.domaine_id', '=', 'domaines.id')
-            ->orderBy('domaines.structuresIAP_id')
+            ->where('domaines.structuresIAP_id', Auth::user()->structuresIAP_id)
             ->orderBy('domaines.name')
             ->orderBy('specialites.name')
             ->select('specialites.*')
             ->paginate(10);
-        return view('superadmin.specialites', compact('domaines', 'specialites', 'specialite', 'structuresIAPs'));
+        return view('admin.specialites', compact('domaines', 'specialites', 'specialite'));
     }
 
     /**
@@ -85,6 +90,7 @@ class SpecialiteController extends Controller
             'name' => 'required|string',
             'domaine_id' => 'required|exists:domaines,id',
         ]);
+        $validatedData['updated_by'] = Auth::user()->id;
         $specialite->fill($validatedData)->save();
         return to_route('specialites.index')->with('success', 'Modification effectuée avec succès');
     }
@@ -94,6 +100,8 @@ class SpecialiteController extends Controller
      */
     public function destroy(Specialite $specialite)
     {
+        $specialite->deleted_by = Auth::user()->id;
+        $specialite->save();
         $specialite->delete();
         return to_route('specialites.index')->with('success', 'Spécialité désactivé');
     }

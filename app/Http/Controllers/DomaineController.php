@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Domaine;
 use App\Models\StructuresIAP;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DomaineController extends Controller
 {
@@ -13,9 +14,9 @@ class DomaineController extends Controller
      */
     public function index()
     {
-        $domaines = Domaine::orderBy('structuresIAP_id')->orderBy('name')->paginate(10);
-        $structuresIAPs = StructuresIAP::all();
-        return view('superadmin.domaines', compact('structuresIAPs', 'domaines'));
+        $domaines = Domaine::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('name')->paginate(10);
+        return view('admin.domaines', compact('domaines'));
     }
 
     /**
@@ -32,14 +33,17 @@ class DomaineController extends Controller
     public function store(Request $request)
     {
         $name = $request->name;
-        $structuresIAP_id = $request->structuresIAP_id;
+        $structuresIAP_id = Auth::user()->structuresIAP_id;
+        $created_by = Auth::user()->id;
+        $updated_by = Auth::user()->id;
         $request->validate([
             'name' => 'required|string',
-            'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
         ]);
         Domaine::create([
             'name' => $name,
             'structuresIAP_id' => $structuresIAP_id,
+            'created_by' => $created_by,
+            'updated_by' => $updated_by,
         ]);
 
         return to_route('domaines.index')->with('success', 'Domaine ajouté.');
@@ -58,9 +62,9 @@ class DomaineController extends Controller
      */
     public function edit(Domaine $domaine)
     {
-        $domaines = Domaine::orderBy('structuresIAP_id')->orderBy('name')->paginate(10);
-        $structuresIAPs = StructuresIAP::all();
-        return view('superadmin.domaines', compact('structuresIAPs', 'domaines', 'domaine'));
+        $domaines = Domaine::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderBy('name')->paginate(10);
+        return view('admin.domaines', compact('domaines', 'domaine'));
     }
 
     /**
@@ -70,8 +74,8 @@ class DomaineController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
         ]);
+        $validatedData['updated_by'] = Auth::user()->id;
         $domaine->fill($validatedData)->save();
         return to_route('domaines.index')->with('success', 'Modification effectuée avec succès');
     }
@@ -81,6 +85,8 @@ class DomaineController extends Controller
      */
     public function destroy(Domaine $domaine)
     {
+        $domaine->deleted_by = Auth::user()->id;
+        $domaine->save();
         $domaine->delete();
         return to_route('domaines.index')->with('success', 'Domaine désactivé');
     }

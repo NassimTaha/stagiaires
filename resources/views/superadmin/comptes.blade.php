@@ -33,7 +33,6 @@
                     <p class="h6  ">User Type</p>
                     <select name="usertype" class="form-select form-select-sm" aria-label=".form-select-sm example">
                         <option value="Superadmin" {{ $compte->usertype == 'Superadmin' ? 'selected' : '' }}>Superadmin</option>
-                        <option value="Subadmin" {{ $compte->usertype == 'Subadmin' ? 'selected' : '' }}>Subadmin</option>
                         <option value="Admin" {{ $compte->usertype == 'Admin' ? 'selected' : '' }}>Admin</option>
                         <option value="User" {{ $compte->usertype == 'User' ? 'selected' : '' }}>User</option>
                         <option value="Security" {{ $compte->usertype == 'Security' ? 'selected' : '' }}>Security</option>
@@ -111,7 +110,6 @@
                 <p class="h6   ">User Type</p>
                 <select name="usertype" class="form-select form-select-sm" aria-label=".form-select-sm example">
                     <option value="Superadmin">Superadmin</option>
-                    <option value="Subadmin">Subadmin</option>
                     <option value="Admin">Admin</option>
                     <option value="User">User</option>
                     <option value="Security">Security</option>
@@ -181,15 +179,18 @@
             </form>
         </div>
     
-    <div class="table-responsive">
-    <table class="table table-sm table-dark table-bordered table-striped table-hover">
+        <div class="table-wrapper">
+            <table class="fl-table">  
+                <thead>
         <tr>
             <th>Username</th>
             <th>Email</th>
             <th>User Type</th>
             <th>Structure IAP</th>
             <th style="text-align: center;">Options</th>
-        </tr>   
+        </tr>  
+                </thead>
+        <tbody> 
         @foreach ($comptes as $compte)
         <tr>
             <td>{{$compte->name}}</td>
@@ -214,6 +215,7 @@
                     </div> 
                     </td> 
         </tr>
+        </tbody>
         <div class="modal fade" id="exampleModal{{$compte->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -242,7 +244,7 @@
         @endforeach
     </table>
     </div>
-    <div class="paginator">
+    <div class="paginator mt-2">
         {{ $comptes->links() }}
     </div>
     @endif

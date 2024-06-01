@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Stage extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'stage_type',
@@ -27,6 +29,9 @@ class Stage extends Model
         'encadrant_id',
         'etablissement_id',
         'structuresAffectation_id',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     public function specialite()

@@ -15,7 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('domaine_id');
-            $table->foreign('domaine_id')->references('id')->on('domaines')->onDelete('cascade');
+            $table->foreign('domaine_id')->references('id')->on('domaines');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

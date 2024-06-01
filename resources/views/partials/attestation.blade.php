@@ -46,7 +46,7 @@
 
         <br>
             <div style="text-align: right;">
-                <p class="float-end">Fait à {{$signataire->structuresIAP->name}}, le <?php echo date('Y/m/d'); ?></p>
+                <p class="float-end">Fait à {{$signataire->structuresIAP->name}}, le <?php echo date('d/m/Y'); ?></p>
             </div>
             <br>
 

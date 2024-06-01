@@ -23,7 +23,14 @@ return new class extends Migration
             $table->enum('blood_group', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
             $table->date('attestation_date')->nullable();
             $table->unsignedBigInteger('stage_id');
-            $table->foreign('stage_id')->references('id')->on('stages')->onDelete('cascade');
+            $table->foreign('stage_id')->references('id')->on('stages');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

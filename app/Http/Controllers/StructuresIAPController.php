@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\StructuresIAP;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StructuresIAPController extends Controller
 {
@@ -30,11 +31,15 @@ class StructuresIAPController extends Controller
     public function store(Request $request)
     {
         $name = $request->name;
+        $created_by = Auth::user()->id;
+        $updated_by = Auth::user()->id;
         $request->validate([
             'name' => 'required|regex:/^[\p{L}\'\s]+$/u|unique:structures_i_a_p_s,name',
         ]);
         StructuresIAP::create([
             'name' => $name,
+            'created_by' => $created_by,
+            'updated_by' => $updated_by,
         ]);
         return to_route('structuresIAP.index')->with('success', 'Structures IAP ajoutée.');
     }
@@ -64,6 +69,7 @@ class StructuresIAPController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|regex:/^[\p{L}\'\s]+$/u|unique:structures_i_a_p_s,name',
         ]);
+        $validatedData['updated_by'] = Auth::user()->id;
         $structuresIAP->fill($validatedData)->save();
         return to_route('structuresIAP.index')->with('success', 'Modification effectuée avec succès');
     }
@@ -73,6 +79,8 @@ class StructuresIAPController extends Controller
      */
     public function destroy(StructuresIAP $structuresIAP)
     {
+        $structuresIAP->deleted_by = Auth::user()->id;
+        $structuresIAP->save();
         $structuresIAP->delete();
         return to_route('structuresIAP.index')->with('success', 'Structures IAP désactivée.');
     }

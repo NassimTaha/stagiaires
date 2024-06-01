@@ -1,4 +1,4 @@
-<x-masterSubadmin title="Encadrants">
+<x-master title="Encadrants">
     @if(request()->has('recherche'))
         @if ($stagiaires->isEmpty())
             <div>
@@ -13,10 +13,11 @@
                     <i class="bi bi-arrow-left"></i> Retour
                 </a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-sm table-dark table-bordered table-striped table-hover">
-                    <thead>
+            <div class="table-wrapper">
+                <table class="fl-table">  
+                    <thead>    
                         <tr>
+                            <th>Struct. IAP</th>
                             <th>Nom</th>
                             <th>Date de naissance</th>
                             <th>Lieu de naissance</th>
@@ -31,6 +32,7 @@
                     <tbody>
                         @foreach ($stagiaires as $stagiaire)
                         <tr>
+                            <td>{{$stagiaire->stage->structureAffectation->structuresIAP->name}}</td>
                             <td>{{$stagiaire->last_name}} {{$stagiaire->first_name}}</td>
                             <td>{{$stagiaire->date_of_birth}}</td>
                             <td>{{$stagiaire->place_of_birth}}</td>
@@ -55,7 +57,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="paginator">
+            <div class="paginator mt-2">
                 {{ $stagiaires->appends(['recherche' => ''])->links() }}
             </div>
         @endif
@@ -69,12 +71,22 @@
         <form method="POST" action="{{ route('stagiaires.searchStagiaire') }}">
             @csrf
             <div class="col d-flex">
+                <select style="width: 150px" name="year" id="year" class="form-select form-select-sm flex-grow-1 me-2" aria-label=".form-select-sm example">
+                    <option selected value="">Année</option>
+                    <?php
+                    $currentYear = date('Y');
+                    for ($i = 0; $i < 10; $i++) {
+                        $year = $currentYear - $i;
+                        echo "<option value=\"$year\">$year</option>";
+                    }
+                    ?>
+                </select> 
                 <select style="width: 210px" id="type_recherche" class="form-select form-select-sm flex-grow-1 me-2" aria-label=".form-select-sm example" required onchange="rechercheType()">
-                    <option selected disabled value="">-- Choisissez une option --</option>
+                    <option selected disabled value="">Options de recherche</option>
                     <option value="structure">Par structure IAP</option>
                     <option value="name">Par nom</option>             
                 </select> 
-                <div style="width: 450px">
+                <div style="width: 350px">
                     <select disabled id="decoy" class="form-select form-select-sm" aria-label=".form-select-sm example" required></select>
                     <select hidden disabled id="structure" name="structuresIAP_id" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
                         <option selected value="">-- Choisissez une structure IAP --</option>
@@ -92,10 +104,11 @@
             </div>
         </form>
     </div>
-    <div class="table-responsive">
-        <table class="table table-sm table-dark table-bordered table-striped table-hover">
+    <div class="table-wrapper">
+        <table class="fl-table">  
             <thead>
                 <tr>
+                    <th>Struct. IAP</th>
                     <th>Nom</th>
                     <th>Date de naissance</th>
                     <th>Lieu de naissance</th>
@@ -109,6 +122,7 @@
             <tbody>
                 @foreach ($stagiaires as $stagiaire)
                 <tr>
+                    <td>{{$stagiaire->stage->structureAffectation->structuresIAP->name}}</td>
                     <td>{{$stagiaire->last_name}} {{$stagiaire->first_name}}</td>
                     <td>{{$stagiaire->date_of_birth}}</td>
                     <td>{{$stagiaire->place_of_birth}}</td>
@@ -132,8 +146,8 @@
             </tbody>
         </table>
     </div>
-    <div class="paginator">
+    <div class="paginator mt-2">
         {{ $stagiaires->links() }}
     </div>
     @endif
-</x-masterSubadmin>
+</x-master>

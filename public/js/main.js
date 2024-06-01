@@ -24,7 +24,7 @@ function rechercheType() {
         if (select.id === selectValue) {
             select.removeAttribute("hidden");
             select.removeAttribute("disabled");
-        } else if (select.id !== "type_recherche") {
+        } else if (select.id !== "type_recherche" && select.id !== "year") {
             select.setAttribute("hidden", true);
             select.setAttribute("disabled", true);
         }
@@ -40,26 +40,27 @@ function rechercheType() {
 }
 
     function validateForm() {
-            
-    var structuresAffectation = document.getElementsByName('structuresIAP_id')[0].value;
-    var stageType = document.getElementsByName('stage_type')[0].value;
-    var etablissement = document.getElementsByName('etablissement_id')[0].value;
-    var stagiare_count = document.getElementsByName('stagiare_count')[0].value;
-    var level = document.getElementsByName('level')[0].value;
-    var domaine = document.getElementsByName('domaine_id')[0].value;
-    var specialite = document.getElementsByName('specialite_id')[0].value;
-    var year = document.getElementsByName('year')[0].value;
-
-
-    if (structuresAffectation || stageType || etablissement || stagiare_count || level || domaine || specialite || year ) {
-        return true; 
-    } else {
-        var myModal = new bootstrap.Modal(document.getElementById('searchModal'));
-        myModal.show();
-        return false; 
+        var structuresAffectation = document.getElementsByName('structuresIAP_id')[0].value;
+        var stageType = document.getElementsByName('stage_type')[0].value;
+        var etablissement = document.getElementsByName('etablissement_id')[0].value;
+        var stagiaire_count = document.getElementsByName('stagiaire_count')[0].value;
+        var level = document.getElementsByName('level')[0].value;
+        var domaine = document.getElementsByName('domaine_id')[0].value;
+        var specialite = document.getElementsByName('specialite_id')[0].value;
+        var year = document.getElementsByName('year')[0].value;
+        var stage_annuleOui = document.getElementsByName('stage_annuleOui')[0].checked;
+        var stage_annuleNon = document.getElementsByName('stage_annuleNon')[0].checked;
+        var clotureOui = document.getElementsByName('clotureOui')[0].checked;
+        var clotureNon = document.getElementsByName('clotureNon')[0].checked;
+    
+        if (structuresAffectation || stageType || etablissement || stagiaire_count || level || domaine || specialite || year || stage_annuleOui || stage_annuleNon || clotureOui || clotureNon) {
+            return true; 
+        } else {
+            var myModal = new bootstrap.Modal(document.getElementById('searchModal'));
+            myModal.show();
+            return false; 
+        }
     }
-
-}
 
     function resetForm2() {
     document.getElementById("search_form").reset();
@@ -191,6 +192,43 @@ function rechercheType() {
         }
     }
 
-    
+    function handleClotureOui() {
+        const clotureOui = document.getElementById('clotureOui');
+        const clotureNon = document.getElementById('clotureNon');
+        if(clotureNon.checked){
+            clotureOui.checked = true;
+            clotureNon.checked = false;
+        }
+    }
+
+    function handleClotureNon() {
+        const clotureOui = document.getElementById('clotureOui');
+        const clotureNon = document.getElementById('clotureNon');
+        if(clotureOui.checked){
+            clotureNon.checked = true;
+        clotureOui.checked = false;
+        }
+     
+    }
+
+    function handleStageAnnuleOui() {
+        const stageAnnuleOui = document.getElementById('stage_annuleOui');
+        const stageAnnuleNon = document.getElementById('stage_annuleNon');
+        if(stageAnnuleNon.checked){
+            stageAnnuleOui.checked = true;
+            stageAnnuleNon.checked = false;
+        }
+        
+    }
+
+    function handleStageAnnuleNon() {
+        const stageAnnuleOui = document.getElementById('stage_annuleOui');
+        const stageAnnuleNon = document.getElementById('stage_annuleNon');
+        if(stageAnnuleOui.checked){
+            stageAnnuleNon.checked = true;
+            stageAnnuleOui.checked = false;
+        }
+        
+    }
 
 

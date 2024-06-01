@@ -19,11 +19,11 @@
         <div style="background-image: linear-gradient(45deg, rgb(240, 92, 24) 0%, rgb(240, 92, 24) 18%,rgb(239, 116, 49) 18%, rgb(239, 116, 49) 33%,rgb(238, 140, 73) 33%, rgb(238, 140, 73) 38%,rgb(237, 165, 98) 38%, rgb(237, 165, 98) 53%,rgb(235, 189, 122) 53%, rgb(235, 189, 122) 56%,rgb(234, 213, 147) 56%, rgb(234, 213, 147) 83%,rgb(233, 237, 171) 83%, rgb(233, 237, 171) 100%),linear-gradient(0deg, rgb(240, 92, 24) 0%, rgb(240, 92, 24) 18%,rgb(239, 116, 49) 18%, rgb(239, 116, 49) 33%,rgb(238, 140, 73) 33%, rgb(238, 140, 73) 38%,rgb(237, 165, 98) 38%, rgb(237, 165, 98) 53%,rgb(235, 189, 122) 53%, rgb(235, 189, 122) 56%,rgb(234, 213, 147) 56%, rgb(234, 213, 147) 83%,rgb(233, 237, 171) 83%, rgb(233, 237, 171) 100%),linear-gradient(67.5deg, rgb(240, 92, 24) 0%, rgb(240, 92, 24) 18%,rgb(239, 116, 49) 18%, rgb(239, 116, 49) 33%,rgb(238, 140, 73) 33%, rgb(238, 140, 73) 38%,rgb(237, 165, 98) 38%, rgb(237, 165, 98) 53%,rgb(235, 189, 122) 53%, rgb(235, 189, 122) 56%,rgb(234, 213, 147) 56%, rgb(234, 213, 147) 83%,rgb(233, 237, 171) 83%, rgb(233, 237, 171) 100%),linear-gradient(22.5deg, rgb(240, 92, 24) 0%, rgb(240, 92, 24) 18%,rgb(239, 116, 49) 18%, rgb(239, 116, 49) 33%,rgb(238, 140, 73) 33%, rgb(238, 140, 73) 38%,rgb(237, 165, 98) 38%, rgb(237, 165, 98) 53%,rgb(235, 189, 122) 53%, rgb(235, 189, 122) 56%,rgb(234, 213, 147) 56%, rgb(234, 213, 147) 83%,rgb(233, 237, 171) 83%, rgb(233, 237, 171) 100%),linear-gradient(90deg, rgb(243, 116, 163),rgb(252, 182, 229)); background-blend-mode:overlay,overlay,overlay,overlay,normal;" class=" min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
             <div>
                 <a href="#">
-                    <img src="{{ asset('storage/img/Sonatrach.png') }}" height="70px" width="70px">
+                    <img style="margin-bottom: 30px;" src="{{ asset('storage/img/Sonatrach.png') }}" class="rounded" height="70px" width="70px">
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div >
                 {{ $slot }}
             </div>
         </div>

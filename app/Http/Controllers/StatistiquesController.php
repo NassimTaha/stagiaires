@@ -3,119 +3,140 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stage;
+use App\Models\StructuresAffectation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StatistiquesController extends Controller
 {
-    public function statistiquesAdmin()
+    public function index()
     {
-        $stages = (stage::all());
-        $count_pfe = 0;
-        $count_im = 0;
-        $count = 0;
-        $pourcentage_pfe = [];
-        $pourcentage_im = [];
+        $operation = 0;
+        $userStructuresIAPId = Auth::user()->structuresIAP_id;
+        $currentYear = date('Y');
 
-        $count_li = 0;
-        $count_ma = 0;
-        $count_do = 0;
-        $count_in = 0;
-        $count_ts = 0;
-        $pourcentage_li = [];
-        $pourcentage_ma = [];
-        $pourcentage_do = [];
-        $pourcentage_in = [];
-        $pourcentage_ts = [];
+        $stages = Stage::join('structures_affectations', function ($join) use ($userStructuresIAPId) {
+            $join->on('stages.structuresAffectation_id', '=', 'structures_affectations.id')
+                ->where('structures_affectations.structuresIAP_id', '=', $userStructuresIAPId);
+        })
+            ->where('stages.year', $currentYear)
+            ->where('stages.stage_annule', 0)
+            ->select('stages.*')
+            ->get();
 
-        $count_en = 0;
-        $count_te = 0;
-        $pourcentage_en = [];
-        $pourcentage_te = [];
+        $affectations = StructuresAffectation::where('structuresIAP_id', $userStructuresIAPId)->get();
 
+        $quota_dispos_pfe = [];
+        $quota_dispos_im = [];
+        $pourcentage_dispos_pfe = [];
+        $pourcentage_dispos_im = [];
+        $affectationStagesCount_pfe = [];
+        $affectationStagesCount_im = [];
 
+        foreach ($affectations as $affectation) {
+            $stageCountPFE = $stages->where('stage_type', 'pfe')
+                ->where('structuresAffectation_id', $affectation->id)
+                ->count();
 
-        foreach ($stages as $stage) {
-            $count++;
+            $quota_dispo_pfe = $affectation->quota_pfe - $stageCountPFE;
+            $quota_dispo_pfe = max($quota_dispo_pfe, 0);
+            $pourcentage_dispo_pfe = $affectation->quota_pfe > 0 ? round(($quota_dispo_pfe * 100) / $affectation->quota_pfe, 1) : 0;
+
+            $quota_dispos_pfe[] = $quota_dispo_pfe;
+            $pourcentage_dispos_pfe[] = $pourcentage_dispo_pfe;
+            $affectationStagesCount_pfe[$affectation->id] = $stageCountPFE;
+
+            $stageCountImm = $stages->where('stage_type', 'immersion')
+                ->where('structuresAffectation_id', $affectation->id)
+                ->count();
+
+            $quota_dispo_im = $affectation->quota_im - $stageCountImm;
+            $quota_dispo_im = max($quota_dispo_im, 0);
+            $pourcentage_dispo_im = $affectation->quota_im > 0 ? round(($quota_dispo_im * 100) / $affectation->quota_im, 1) : 0;
+
+            $quota_dispos_im[] = $quota_dispo_im;
+            $pourcentage_dispos_im[] = $pourcentage_dispo_im;
+            $affectationStagesCount_im[$affectation->id] = $stageCountImm;
         }
-
-        foreach ($stages as $stage) {
-            if ($stage->type_stage == "pfe") {
-                $count_pfe++;
-            } else {
-                $count_im++;
-            }
-        }
-
-        $formattedPercentage_pfe = number_format(($count_pfe * 100) / $count, 1);
-        $formattedPercentage_im = number_format(($count_im * 100) / $count, 1);
-        $pourcentage_pfe[] = $formattedPercentage_pfe;
-        $pourcentage_im[] = $formattedPercentage_im;
-
-        foreach ($stages as $stage) {
-            if ($stage->level == "licence") {
-                $count_li++;
-            }
-            if ($stage->level == "master") {
-                $count_ma++;
-            }
-            if ($stage->level == "doctorat") {
-                $count_do++;
-            }
-            if ($stage->level == "ingénieur") {
-                $count_in++;
-            }
-            if ($stage->level == "TS") {
-                $count_ts++;
-            }
-        }
-        $formattedPercentage_li = number_format(($count_li * 100) / $count, 1);
-        $formattedPercentage_ma = number_format(($count_ma * 100) / $count, 1);
-        $formattedPercentage_do = number_format(($count_do * 100) / $count, 1);
-        $formattedPercentage_in = number_format(($count_in * 100) / $count, 1);
-        $formattedPercentage_ts = number_format(($count_ts * 100) / $count, 1);
-
-        $pourcentage_li[] = $formattedPercentage_li;
-        $pourcentage_ma[] = $formattedPercentage_ma;
-        $pourcentage_do[] = $formattedPercentage_do;
-        $pourcentage_in[] = $formattedPercentage_in;
-        $pourcentage_ts[] = $formattedPercentage_ts;
-
-        foreach ($stages as $stage) {
-            if ($stage->end_date > now()) {
-                $count_en++;
-            } else {
-                $count_te++;
-            }
-        }
-        $formattedPercentage_en = number_format(($count_en * 100) / $count, 1);
-        $formattedPercentage_te = number_format(($count_te * 100) / $count, 1);
-
-        $pourcentage_en[] = $formattedPercentage_en;
-        $pourcentage_te[] = $formattedPercentage_te;
-
-
 
 
         return view('admin.statistiques', compact(
+            'affectations',
+            'quota_dispos_pfe',
+            'quota_dispos_im',
+            'pourcentage_dispos_pfe',
+            'pourcentage_dispos_im',
             'stages',
-            'pourcentage_pfe',
-            'pourcentage_im',
-            'count_pfe',
-            'count_im',
-            'pourcentage_li',
-            'pourcentage_ma',
-            'pourcentage_do',
-            'pourcentage_en',
-            'pourcentage_te',
-            'pourcentage_in',
-            'count_li',
-            'count_ma',
-            'count_do',
-            'count_en',
-            'count_te',
-            'count_in',
-            'pourcentage_ts',
-            'count_ts'
+            'affectationStagesCount_pfe',
+            'affectationStagesCount_im',
+            'operation'
+        ));
+    }
+
+    public function search(Request $request)
+    {
+        if ($request->input('structuresAffectation_id') == 0) {
+            return redirect()->route('statistiquesAdmin');
+        }
+
+        $operation = 1;
+        $affectationID = $request->input('structuresAffectation_id');
+        $userStructuresIAPId = Auth::user()->structuresIAP_id;
+        $currentYear = date('Y');
+
+        $stages = Stage::join('structures_affectations', function ($join) use ($userStructuresIAPId) {
+            $join->on('stages.structuresAffectation_id', '=', 'structures_affectations.id')
+                ->where('structures_affectations.structuresIAP_id', '=', $userStructuresIAPId);
+        })
+            ->where('stages.year', $currentYear)
+            ->where('stages.stage_annule', 0)
+            ->select('stages.*')
+            ->get();
+
+        $affectations = StructuresAffectation::where('structuresIAP_id', $userStructuresIAPId)->get();
+
+        $quota_dispos_pfeR = 0;
+        $quota_dispos_imR = 0;
+        $pourcentage_dispos_pfeR = 0;
+        $pourcentage_dispos_imR = 0;
+        $affectationStagesCount_pfeR = 0;
+        $affectationStagesCount_imR = 0;
+
+        foreach ($affectations as $affectation) {
+            if ($affectation->id == $affectationID) {
+                $stageCountPFE = $stages->where('stage_type', 'pfe')
+                    ->where('structuresAffectation_id', $affectation->id)
+                    ->count();
+
+                $quota_dispo_pfeR = $affectation->quota_pfe - $stageCountPFE;
+                $quota_dispo_pfeR = max($quota_dispo_pfeR, 0);
+                $pourcentage_dispos_pfeR = $affectation->quota_pfe > 0 ? round(($quota_dispo_pfeR * 100) / $affectation->quota_pfe, 1) : 0;
+
+                $affectationStagesCount_pfeR = $stageCountPFE;
+
+                $stageCountImm = $stages->where('stage_type', 'immersion')
+                    ->where('structuresAffectation_id', $affectation->id)
+                    ->count();
+
+                $quota_dispo_imR = $affectation->quota_im - $stageCountImm;
+                $quota_dispo_imR = max($quota_dispo_imR, 0);
+                $pourcentage_dispos_imR = $affectation->quota_im > 0 ? round(($quota_dispo_imR * 100) / $affectation->quota_im, 1) : 0;
+
+                $affectationStagesCount_imR = $stageCountImm;
+            }
+        }
+
+        return view('admin.statistiques', compact(
+            'affectations',
+            'quota_dispos_pfeR',
+            'quota_dispos_imR',
+            'pourcentage_dispos_pfeR',
+            'pourcentage_dispos_imR',
+            'stages',
+            'affectationStagesCount_pfeR',
+            'affectationStagesCount_imR',
+            'operation',
+            'affectationID'
         ));
     }
 }

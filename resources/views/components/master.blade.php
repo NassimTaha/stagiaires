@@ -12,7 +12,7 @@
     <link href="{{ asset('bootstrap-icons-1.11.3/font/bootstrap-icons.css') }}" rel="stylesheet">
     <title>{{$title}}</title>
   </head>
-  <body>
+  <body style="background-color:  #F0EAD6">
     @include('partials.nav')
     <div class="container my-2">
       @include('partials.flashbag')

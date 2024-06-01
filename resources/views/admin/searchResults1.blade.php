@@ -8,154 +8,114 @@
         <p class="h2 text-center my-3">Aucun stage trouvé.</p>
     @else
     <p style="font-family: Montserrat" class="h2">Nombre de stages : {{$nbr_stages}}</p>
-    <div class="table-responsive">
-        <div class="table-responsive">
-            <table class="table table-sm table-bordered border-secondary">                  
+    <div class="table-wrapper">
+        <table class="fl-table">  
+            <thead>           
                 <tr>
-                    <th class='table-dark'>Structure d'affectation</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->structureAffectation->name}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->structureAffectation->name}}</td>
-                        @endif 
+                    <th>Structure d'affectation</th>
+                    @foreach ($stages as $stage)                     
+                            <td >{{$stage->structureAffectation->name}}</td>
                     @endforeach                    
                 </tr>
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Encadrant</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->encadrant->last_name}} {{$stage->encadrant->first_name}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->encadrant->last_name}} {{$stage->encadrant->first_name}}</td>
-                        @endif 
+                    <th >Encadrant</th>
+                    @foreach ($stages as $stage)                      
+                            <td >{{$stage->encadrant->last_name}} {{$stage->encadrant->first_name}}</td>
                     @endforeach                     
                 </tr>
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Type de stage</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{ $stage->stage_type === 'pfe' ? 'Projet fin d\'étude' : 'Stage immersion' }}</td>
-                        @else
-                            <td class='table-warning'>{{ $stage->stage_type === 'pfe' ? 'Projet fin d\'étude' : 'Stage immersion' }}</td>
-                        @endif 
+                    <th >Type de stage</th>
+                    @foreach ($stages as $stage)              
+                            <td >{{ $stage->stage_type === 'pfe' ? 'Projet fin d\'étude' : 'Stage immersion' }}</td>
                     @endforeach                     
                 </tr>
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Date début</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->start_date}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->start_date}}</td>
-                        @endif 
+                    <th >Date début</th>
+                    @foreach ($stages as $stage)
+                            <td >{{$stage->start_date}}</td>
                     @endforeach                     
                 </tr>
+            </thead>
+            <thead>
+                <thead>
                 <tr>
-                    <th class='table-dark'>Date fin</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->end_date}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->end_date}}</td>
-                        @endif 
+                    <th >Date fin</th>
+                    @foreach ($stages as $stage)
+                            <td >{{$stage->end_date}}</td>
                     @endforeach                     
                 </tr>
+                </thead>
+                <thead>
                 <tr>
-                    <th class='table-dark'>Établissement</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->etablissement->name}} ({{$stage->etablissement->wilaya}})</td>
-                        @else
-                            <td class='table-warning'>{{$stage->etablissement->name}} ({{$stage->etablissement->wilaya}})</td>
-                        @endif 
+                    <th >Établissement</th>
+                    @foreach ($stages as $stage)                    
+                            <td >{{$stage->etablissement->name}} ({{$stage->etablissement->wilaya}})</td>
                     @endforeach                     
                 </tr>
+                </thead>
+                <thead>
                 <tr>
-                    <th class='table-dark'>Niveau</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->level}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->level}}</td>
-                        @endif 
+                    <th >Niveau</th>
+                    @foreach ($stages as $stage)               
+                            <td >{{$stage->level}}</td>
                     @endforeach                     
                 </tr>
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Domaine</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->specialite->domaine->name}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->specialite->domaine->name}}</td>
-                        @endif 
+                    <th >Domaine</th>
+                    @foreach ($stages as $stage)
+                            <td >{{$stage->specialite->domaine->name}}</td>
                     @endforeach                     
                 </tr> 
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Spécialité</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->specialite->name}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->specialite->name}}</td>
-                        @endif 
-                    @endforeach                     
-                </tr>       
-                <tr>
-                    <th class='table-dark'>Thème</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->theme}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->theme}}</td>
-                        @endif 
+                    <th >Spécialité</th>
+                    @foreach ($stages as $stage)
+                            <td >{{$stage->specialite->name}}</td>
                     @endforeach                     
                 </tr>  
+            </thead>
+            <thead>     
                 <tr>
-                    <th class='table-dark'>Jours de réception</th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                            <td class="table-light">{{$stage->reception_days}}</td>
-                        @else
-                            <td class='table-warning'>{{$stage->reception_days}}</td>
-                        @endif 
+                    <th >Thème</th>
+                    @foreach ($stages as $stage)
+                            <td >{{$stage->theme}}</td>
                     @endforeach                     
                 </tr>  
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Stagiares</th>
-                    @foreach ($stages as $key => $stage)
-                    @if ($key % 2 == 0)
-                        <td class="table-light">
-                            @foreach ($stage->stagiaires as $stagiaire)    
-                                {{ $stagiaire->last_name }} {{ $stagiaire->first_name }}<br>
-                            @endforeach 
-                        </td>
-                    @else
-                    <td class='table-warning'>
+                    <th >Jours de réception</th>
+                    @foreach ($stages as $stage)
+                            <td >{{$stage->reception_days}}</td>
+                    @endforeach                     
+                </tr>
+            </thead>
+            <thead>  
+                <tr>
+                    <th>Stagiares</th>
+                    @foreach ($stages as $stage)
+                    <td>
                         @foreach ($stage->stagiaires as $stagiaire)    
                             {{ $stagiaire->last_name }} {{ $stagiaire->first_name }}<br>
                         @endforeach 
                     </td>
-                    @endif
-                    @endforeach                     
-                </tr>          
+                    @endforeach            
+                </tr>   
+            </thead>
+            <thead>       
                 <tr>
-                    <th class='table-dark'>Stage clôturé </th>
-                    @foreach ($stages as $key => $stage)
-                        @if ($key % 2 == 0)
-                        <td class="table-light" style="text-align: center;">
-                            @if ($stage->cloture === 1)
-                            <button class="btn btn-sm btn-success">
-                                <i class="bi bi-check-circle-fill"></i> Oui
-                            </button>      
-                            @else
-                            <a href="{{route('Stage.cloture', $stage->id)}}" class="btn btn-sm btn-danger">
-                                <i class="bi bi-x-circle-fill"></i> Non
-                            </a>
-                            @endif
-                        </td>                                            
-                        @else
-                        <td class="table-warning" style="text-align: center;">
+                    <th >Stage clôturé </th>
+                    @foreach ($stages as $stage)            
+                        <td>
                             @if ($stage->cloture === 1)
                             <button class="btn btn-sm btn-success">
                                 <i class="bi bi-check-circle-fill"></i> Oui
@@ -166,23 +126,14 @@
                             </a>
                             @endif
                         </td>                                                
-                        @endif 
                     @endforeach                     
                 </tr>  
+            </thead>
+            <thead>
                 <tr>
-                    <th class='table-dark'>Modifier / Annuler</th>
-                    @foreach ($stages as $key => $stage)
-                    @if ($key % 2 == 0)
-                        <td class="table-light" style="text-align: center;">
-                            <a href="{{route('stages.edit', $stage->id)}}" class="btn btn-sm btn-dark ">
-                                <i class="bi bi-pencil-square text-warning"></i>
-                            </a>
-                            <a data-bs-toggle="modal" data-bs-target="#exampleModal{{$stage->id}}" class="btn btn-sm btn-dark">
-                                <i class="bi bi-x-octagon-fill text-warning"></i> 
-                            </a>
-                        </td>
-                    @else
-                            <td class="table-warning" style="text-align: center;">
+                    <th >Modifier / Annuler</th>
+                    @foreach ($stages as $stage)
+                            <td style="text-align: center;">
                                 <a href="{{route('stages.edit', $stage->id)}}" class="btn btn-sm btn-dark ">
                                     <i class="bi bi-pencil-square text-warning"></i>
                                 </a>
@@ -190,7 +141,6 @@
                                     <i class="bi bi-x-octagon-fill text-warning"></i> 
                                 </a>
                             </td>
-                    @endif
                     <div class="modal fade" id="exampleModal{{$stage->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
@@ -214,12 +164,12 @@
                         </div>
                       </div> 
                     @endforeach  
-                </tr>        
-            </table>        
-        </div>        
-    </div>  
+                </tr>   
+            </thead>     
+            </table>
+        </div>   
     @endif
-    <div class="paginator">
+    <div class="paginator mt-2">
         {{ $stages->links() }}
     </div>
 </x-masterAdmin>

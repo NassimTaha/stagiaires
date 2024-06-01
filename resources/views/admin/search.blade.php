@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-4">
                     <p class="h6">Année</p>
-                    <input name="year" pattern="[0-9]{4}" maxlength="4" placeholder="YYYY" class="form-control form-control-sm" type="text"  aria-label=".form-control-sm example" autocomplete="off">
+                    <input name="year" min="2000" max="2050" maxlength="4" pattern="[0-9]{4}" maxlength="4" placeholder="XXXX" class="form-control form-control-sm" type="number"  aria-label=".form-control-sm example" autocomplete="off">
                 </div>
                 <div class="col-4">
                     <p class="h6">Nombre de stagiaires</p>
@@ -121,6 +121,26 @@
                 <button type="button" onclick="resetForm2()" style="width: 150px" class=" float-end btn btn-dark mx-1">
                     <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
                 </button>
+
+                <p class="h6  mx-5">Annulés ?</p>
+                <div class="form-check form-check-inline mt-2">
+                    <input class="form-check-input" type="checkbox" name="stage_annuleOui" id="stage_annuleOui" value="1" onchange="handleStageAnnuleOui()">
+                    <label class="form-check-label" for="stage_annuleOui">Oui</label>
+                </div>
+                <div class="form-check form-check-inline mt-2">
+                    <input class="form-check-input" type="checkbox" name="stage_annuleNon" id="stage_annuleNon" value="1" onchange="handleStageAnnuleNon()">
+                    <label class="form-check-label" for="stage_annuleNon">Non</label>
+                </div>
+
+                <p class="h6 mx-3" >Clôturés ?</p>
+                <div class="form-check form-check-inline mt-2">
+                    <input class="form-check-input" type="checkbox" name="clotureOui" id="clotureOui" value="1" onclick="handleClotureOui()">
+                    <label class="form-check-label" for="clotureOui">Oui</label>
+                </div>
+                <div class="form-check form-check-inline mt-2">
+                    <input class="form-check-input" type="checkbox" name="clotureNon" id="clotureNon" value="1" onclick="handleClotureNon()">
+                    <label class="form-check-label" for="clotureNon">Non</label>
+                </div>
                 
             </div>
 

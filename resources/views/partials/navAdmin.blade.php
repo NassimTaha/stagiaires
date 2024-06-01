@@ -29,12 +29,22 @@
             <li><a class="dropdown-item" href="{{route('attestation')}}">Imprimer attestation</a></li>
           </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="{{route('encadrants2.index')}}">Encadrants</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Administration <i class="bi bi-gear-fill"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{route('signataires.index')}}">Signataires <i class="bi bi-vector-pen"></i></a></li>
+            <li><a class="dropdown-item" href="{{route('structuresAffectation.index')}}">Structures D'affectation <i class="bi bi-building-fill"></i></a></li>
+            <li><a class="dropdown-item" href="{{route('encadrants.index')}}">Encadrants <i class="bi bi-person-lines-fill"></i></a></li>
+            <li><a class="dropdown-item" href="{{route('domaines.index')}}">Domaines <i class="bi bi-journals"></i></a></li>
+            <li><a class="dropdown-item" href="{{route('specialites.index')}}">Spécialités <i class="bi bi-bookmarks-fill"></i></a></li>
+          </ul>
         </li>
+        <a class="nav-link {{ request()->routeIs('etablissements.index') ? 'active' : '' }}" href="{{ route('etablissements.index') }}">Établissements <i class="bi bi-buildings"></i></a>
         
 
-        <div class="hidden sm:flex sm:items-center sm:ms-6" style="margin-left: 550px">
+        <div class="hidden sm:flex sm:items-center sm:ms-6" style="margin-left: 200px" >
           <x-dropdown align="right" width="48">
               <x-slot name="trigger">
                   <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">        

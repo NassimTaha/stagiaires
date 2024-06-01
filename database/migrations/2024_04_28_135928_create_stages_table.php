@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->date('cloture_date');
             $table->enum('level', ['Licence', 'Master', 'Doctorat', 'Ingenieur', 'TS']);
-            $table->enum('stagiare_count', ['Monome', 'Binome', 'Trinome', 'Quadrinome']);
+            $table->enum('stagiaire_count', ['Monome', 'Binome', 'Trinome', 'Quadrinome']);
             $table->unsignedInteger('year')->default(date('Y'));
             $table->string('reception_days');
             $table->boolean('memoire')->default(false);
@@ -27,13 +27,20 @@ return new class extends Migration
             $table->boolean('stage_annule')->default(false);
             $table->text('observation')->nullable();
             $table->unsignedBigInteger('encadrant_id');
-            $table->foreign('encadrant_id')->references('id')->on('encadrants')->onDelete('cascade');
+            $table->foreign('encadrant_id')->references('id')->on('encadrants');
             $table->unsignedBigInteger('etablissement_id');
-            $table->foreign('etablissement_id')->references('id')->on('etablissements')->onDelete('cascade');
+            $table->foreign('etablissement_id')->references('id')->on('etablissements');
             $table->unsignedBigInteger('structuresAffectation_id');
-            $table->foreign('structuresAffectation_id')->references('id')->on('structures_affectations')->onDelete('cascade');
+            $table->foreign('structuresAffectation_id')->references('id')->on('structures_affectations');
             $table->unsignedBigInteger('specialite_id');
-            $table->foreign('specialite_id')->references('id')->on('specialites')->onDelete('cascade');
+            $table->foreign('specialite_id')->references('id')->on('specialites');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

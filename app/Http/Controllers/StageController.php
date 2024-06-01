@@ -12,6 +12,7 @@ use App\Models\StructuresAffectation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StageController extends Controller
 {
@@ -105,35 +106,34 @@ class StageController extends Controller
                 'etablissement_id' => 'required|exists:etablissements,id',
                 'structuresAffectation_id' => 'required|exists:structures_affectations,id',
             ]);
-            $validatedDataStage['cloture_date'] = $request->end_date;
+
+            $validatedDataStage['cloture_date'] = $request->input('end_date');
+            $validatedDataStage['created_by'] = Auth::user()->id;
+            $validatedDataStage['updated_by'] = Auth::user()->id;
+
             $stage = Stage::create($validatedDataStage);
 
-            $count = 0;
-            switch ($request->input('stagiaire_count')) {
-                case 'Monome':
-                    $count = 1;
-                    break;
-                case 'Binome':
-                    $count = 2;
-                    break;
-                case 'Trinome':
-                    $count = 3;
-                    break;
-                case 'Quadrinome':
-                    $count = 4;
-                    break;
-            }
-            for ($i = 1; $i <= $count; $i++) {
-                $request->validate([
-                    "last_name{$i}" => 'required|string',
-                    "first_name{$i}" => 'required|string',
-                    "date_of_birth{$i}" => 'required|date',
-                    "place_of_birth{$i}" => 'required|string',
-                    "phone_number{$i}" => 'required|string',
-                    "email{$i}" => 'required|email',
-                    "blood_group{$i}" => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-                ]);
+            $count = match ($request->input('stagiaire_count')) {
+                'Monome' => 1,
+                'Binome' => 2,
+                'Trinome' => 3,
+                'Quadrinome' => 4,
+                default => 0,
+            };
 
+            $stagiaireValidationRules = [];
+            for ($i = 1; $i <= $count; $i++) {
+                $stagiaireValidationRules["last_name{$i}"] = 'required|string';
+                $stagiaireValidationRules["first_name{$i}"] = 'required|string';
+                $stagiaireValidationRules["date_of_birth{$i}"] = 'required|date';
+                $stagiaireValidationRules["place_of_birth{$i}"] = 'required|string';
+                $stagiaireValidationRules["phone_number{$i}"] = 'required|string';
+                $stagiaireValidationRules["email{$i}"] = 'required|email';
+                $stagiaireValidationRules["blood_group{$i}"] = 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-';
+            }
+            $request->validate($stagiaireValidationRules);
+
+            for ($i = 1; $i <= $count; $i++) {
                 Stagiaire::create([
                     'last_name' => $request->input("last_name{$i}"),
                     'first_name' => $request->input("first_name{$i}"),
@@ -143,6 +143,8 @@ class StageController extends Controller
                     'email' => $request->input("email{$i}"),
                     'blood_group' => $request->input("blood_group{$i}"),
                     'stage_id' => $stage->id,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
                 ]);
             }
 
@@ -151,6 +153,8 @@ class StageController extends Controller
             return redirect()->route('stages.index')->with('success', 'Stage ajouté.');
         } catch (\Exception $e) {
             DB::rollBack();
+            // Log the exception for debugging
+            Log::error('Error adding stage: ' . $e->getMessage());
             return redirect()->back()->with('danger', 'Une erreur est survenue lors de l\'enregistrement du stage.');
         }
     }
@@ -207,7 +211,8 @@ class StageController extends Controller
                 'etablissement_id' => 'required|exists:etablissements,id',
                 'structuresAffectation_id' => 'required|exists:structures_affectations,id',
             ]);
-
+            $validatedDataStage['cloture_date'] = $request->end_date;
+            $validatedDataStage['updated_by'] = Auth::user()->id;
             $stage->update($validatedDataStage);
 
             $count = match ($request->input('stagiaire_count')) {
@@ -238,6 +243,7 @@ class StageController extends Controller
                         'phone_number' => $request->input("phone_number{$index}"),
                         'email' => $request->input("email{$index}"),
                         'blood_group' => $request->input("blood_group{$index}"),
+                        'updated_by' => Auth::user()->id,
                     ]);
                 }
             }
@@ -247,7 +253,7 @@ class StageController extends Controller
             return redirect()->route('stages.index')->with('success', 'Modification effectuée avec succès');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('danger', 'Une Erreur veuillew remplir les champs');
+            return redirect()->back()->with('danger', 'Erreur');
         }
     }
 

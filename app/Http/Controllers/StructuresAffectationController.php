@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StructuresAffectation;
 use App\Models\StructuresIAP;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StructuresAffectationController extends Controller
 {
@@ -13,15 +14,17 @@ class StructuresAffectationController extends Controller
      */
     public function index()
     {
-        $structuresAffectations = StructuresAffectation::orderBy('structuresIAP_id')->orderby('type')->orderBy('name')->paginate(10);
-        $directions = StructuresAffectation::where('type', 'Direction')
-            ->orWhere('type', 'Sous-direction')
-            ->orderBy('structuresIAP_id')
+        $structuresAffectations = StructuresAffectation::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderby('type')->orderBy('name')->paginate(10);
+        $directions = StructuresAffectation::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->where(function ($query) {
+                $query->where('type', 'Direction')
+                    ->orWhere('type', 'Sous-direction');
+            })
             ->orderBy('type')
             ->orderBy('name')
             ->get();
-        $structuresIAPs = StructuresIAP::all();
-        return view('superadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs', 'directions'));
+        return view('admin.structuresAffectation', compact('structuresAffectations', 'directions'));
     }
 
     /**
@@ -42,7 +45,10 @@ class StructuresAffectationController extends Controller
         $parent_id = $request->parent_id;
         $quota_pfe = $request->quota_pfe;
         $quota_im = $request->quota_im;
-        $structuresIAP_id = $request->structuresIAP_id;
+        $structuresIAP_id = Auth::user()->structuresIAP_id;
+        $year = date('Y');
+        $created_by = Auth::user()->id;
+        $updated_by = Auth::user()->id;
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -50,7 +56,6 @@ class StructuresAffectationController extends Controller
             'quota_pfe' => 'required|integer|sometimes|between:0,99',
             'quota_im' => 'required|integer|sometimes|between:0,99',
             'parent_id' => 'exists:structures_affectations,id',
-            'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
         ]);
 
         StructuresAffectation::create([
@@ -59,8 +64,10 @@ class StructuresAffectationController extends Controller
             'parent_id' => $parent_id,
             'quota_pfe' => $quota_pfe,
             'quota_im' => $quota_im,
-            'year' => date('Y'),
+            'year' => $year,
             'structuresIAP_id' => $structuresIAP_id,
+            'created_by' => $created_by,
+            'updated_by' => $updated_by,
         ]);
 
         return to_route('structuresAffectation.index')->with('success', 'Structures D\'Affectation ajoutée.');
@@ -80,15 +87,17 @@ class StructuresAffectationController extends Controller
     public function edit(StructuresAffectation $structuresAffectation)
     {
 
-        $structuresAffectations = StructuresAffectation::orderBy('structuresIAP_id')->orderby('type')->orderBy('name')->paginate(10);
-        $directions = StructuresAffectation::where('type', 'Direction')
-            ->orWhere('type', 'Sous-direction')
-            ->orderBy('structuresIAP_id')
+        $structuresAffectations = StructuresAffectation::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->orderby('type')->orderBy('name')->paginate(10);
+        $directions = StructuresAffectation::where('structuresIAP_id', Auth::user()->structuresIAP_id)
+            ->where(function ($query) {
+                $query->where('type', 'Direction')
+                    ->orWhere('type', 'Sous-direction');
+            })
             ->orderBy('type')
             ->orderBy('name')
             ->get();
-        $structuresIAPs = StructuresIAP::all();
-        return view('superadmin.structuresAffectation', compact('structuresAffectations', 'structuresIAPs', 'directions', 'structuresAffectation'));
+        return view('admin.structuresAffectation', compact('structuresAffectations', 'directions', 'structuresAffectation'));
     }
 
     /**
@@ -102,9 +111,9 @@ class StructuresAffectationController extends Controller
             'quota_pfe' => 'required|integer|sometimes|between:0,99',
             'quota_im' => 'required|integer|sometimes|between:0,99',
             'parent_id' => 'exists:structures_affectations,id',
-            'structuresIAP_id' => 'required|exists:structures_i_a_p_s,id',
         ]);
         $validatedData['year'] = date('Y');
+        $validatedData['updated_by'] = Auth::user()->id;
         if ($request->input('type') === 'Direction' || $request->input('type') === 'Sous-direction') {
             $validatedData['parent_id'] = null;
         }
@@ -117,6 +126,8 @@ class StructuresAffectationController extends Controller
      */
     public function destroy(StructuresAffectation $structuresAffectation)
     {
+        $structuresAffectation->deleted_by = Auth::user()->id;
+        $structuresAffectation->save();
         $structuresAffectation->delete();
         return to_route('structuresAffectation.index')->with('success', 'Structures D\'Affectation désactivée.');
     }
